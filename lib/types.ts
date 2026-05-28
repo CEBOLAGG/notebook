@@ -40,6 +40,10 @@ export interface MachinePayload {
   windows_activation: string;
   screen_resolution: string;
   graphics_adapter?: string | null;
+  graphics_adapters?: string[];
+  network_adapters_wifi?: number;
+  network_adapters_ethernet?: number;
+  bluetooth_version?: string | null;
   ntb_code: string;
   location: string;
   keyboard_backlight: string;

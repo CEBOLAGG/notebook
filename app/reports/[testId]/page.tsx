@@ -64,8 +64,27 @@ export default async function ReportDetailPage({ params }: PageProps) {
             <Field label="RAM" value={formatGb(m.ram_gb)} />
             <Field label="SO" value={`${m.os} ${m.os_version}`} />
             <Field label="Resolução" value={m.screen_resolution} />
-            <Field label="Adaptador gráfico" value={m.graphics_adapter || '—'} />
+            <Field
+              label={
+                m.graphics_adapters && m.graphics_adapters.length > 1
+                  ? `Adaptadores gráficos (${m.graphics_adapters.length})`
+                  : 'Adaptador gráfico'
+              }
+              value={
+                m.graphics_adapters && m.graphics_adapters.length > 0
+                  ? m.graphics_adapters.join(' • ')
+                  : (m.graphics_adapter || '—')
+              }
+            />
             <Field label="MAC" value={m.mac_address || '—'} mono />
+            <Field
+              label="Conectividade"
+              value={[
+                `${m.network_adapters_wifi ?? 0} Wi-Fi`,
+                `${m.network_adapters_ethernet ?? 0} Ethernet`,
+                m.bluetooth_version ? `Bluetooth ${m.bluetooth_version}` : null,
+              ].filter(Boolean).join(' • ')}
+            />
             <Field label="TPM" value={`${m.tpm}${m.tpm_version ? ` (${m.tpm_version})` : ''}`} />
             <Field label="Secure Boot" value={m.secure_boot} />
             <Field label="Autopilot" value={m.autopilot} />

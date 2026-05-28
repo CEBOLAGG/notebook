@@ -4,6 +4,7 @@ import type { AutoStatus, FinalClassification, ManualStatus } from './types';
 export const TEST_LABELS: Record<string, string> = {
   ram: 'Memória RAM',
   armazenamento: 'Armazenamento',
+  saude_disco: 'Saúde do disco',
   bateria: 'Bateria',
   carregador: 'Carregador',
   hdmi: 'HDMI / monitor externo',
@@ -11,8 +12,10 @@ export const TEST_LABELS: Record<string, string> = {
   bluetooth: 'Bluetooth',
   internet: 'Internet',
   audio: 'Áudio',
+  estereo: 'Áudio estéreo',
   microfone: 'Microfone',
   tela: 'Tela',
+  camera: 'Câmera',
   teclado: 'Teclado',
   touchpad: 'Touchpad',
   webcam: 'Webcam',
