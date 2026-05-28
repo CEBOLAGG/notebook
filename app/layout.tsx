@@ -6,6 +6,23 @@ export const metadata: Metadata = {
   description: 'Plataforma de relatórios de checklist técnico de notebooks',
 };
 
+// Script anti-flash: aplica .dark no <html> antes do React montar.
+const themeScript = `
+(function() {
+  try {
+    var saved = localStorage.getItem('nbc-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var theme = saved || (prefersDark ? 'dark' : 'light');
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.documentElement.style.colorScheme = 'dark';
+    } else {
+      document.documentElement.style.colorScheme = 'light';
+    }
+  } catch (e) {}
+})();
+`;
+
 export default function RootLayout({
   children,
 }: {
@@ -14,12 +31,8 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
-        <link
-          rel="preconnect"
-          href="https://rsms.me/"
-          crossOrigin="anonymous"
-        />
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>{children}</body>
     </html>

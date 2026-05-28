@@ -2,23 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  color-scheme: light;
-}
-
 html,
 body {
   height: 100%;
 }
 
 body {
-  @apply bg-ink-50 text-ink-800 antialiased;
+  @apply bg-ink-50 text-ink-800 antialiased transition-colors duration-150;
   font-feature-settings: 'cv11', 'ss01', 'ss03';
+}
+
+html.dark body {
+  @apply bg-ink-900 text-ink-100;
 }
 
 @layer components {
   .card {
-    @apply rounded-xl border border-ink-200 bg-white shadow-card;
+    @apply rounded-xl border border-ink-200 bg-white shadow-card transition-colors;
+  }
+  html.dark .card {
+    @apply border-ink-700 bg-ink-800 shadow-none;
   }
 
   .btn {
@@ -27,17 +30,31 @@ body {
   .btn-primary {
     @apply btn bg-brand-600 text-white hover:bg-brand-700;
   }
+  html.dark .btn-primary {
+    @apply bg-brand-500 hover:bg-brand-400;
+  }
   .btn-ghost {
     @apply btn text-ink-700 hover:bg-ink-100;
   }
+  html.dark .btn-ghost {
+    @apply text-ink-200 hover:bg-ink-700;
+  }
   .btn-outline {
     @apply btn border border-ink-200 bg-white text-ink-700 hover:bg-ink-50;
+  }
+  html.dark .btn-outline {
+    @apply border-ink-700 bg-ink-800 text-ink-200 hover:bg-ink-700;
   }
 
   .input,
   .textarea,
   .select {
     @apply w-full rounded-lg border border-ink-200 bg-white px-3 py-2 text-sm text-ink-800 outline-none transition-shadow placeholder:text-ink-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100;
+  }
+  html.dark .input,
+  html.dark .textarea,
+  html.dark .select {
+    @apply border-ink-700 bg-ink-800 text-ink-100 placeholder:text-ink-500 focus:border-brand-400 focus:ring-brand-900;
   }
   .textarea {
     @apply min-h-[5rem] resize-y;
@@ -58,8 +75,23 @@ body {
   .badge-mute {
     @apply badge bg-ink-100 text-ink-600 ring-1 ring-inset ring-ink-200;
   }
+  html.dark .badge-ok {
+    @apply bg-green-900/30 text-green-300 ring-green-800;
+  }
+  html.dark .badge-warn {
+    @apply bg-amber-900/30 text-amber-300 ring-amber-800;
+  }
+  html.dark .badge-bad {
+    @apply bg-red-900/30 text-red-300 ring-red-800;
+  }
+  html.dark .badge-mute {
+    @apply bg-ink-700 text-ink-300 ring-ink-600;
+  }
 
   .label {
     @apply text-xs font-medium uppercase tracking-wide text-ink-500;
+  }
+  html.dark .label {
+    @apply text-ink-400;
   }
 }

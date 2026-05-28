@@ -8,11 +8,11 @@ interface StatProps {
 }
 
 const toneClass: Record<NonNullable<StatProps['tone']>, string> = {
-  ok: 'text-ok',
-  warn: 'text-warn',
-  bad: 'text-bad',
-  mute: 'text-ink-700',
-  brand: 'text-brand-600',
+  ok: 'text-ok dark:text-green-400',
+  warn: 'text-warn dark:text-amber-400',
+  bad: 'text-bad dark:text-red-400',
+  mute: 'text-ink-700 dark:text-ink-200',
+  brand: 'text-brand-600 dark:text-brand-400',
 };
 
 export function Stat({ label, value, hint, tone = 'mute' }: StatProps) {
@@ -22,7 +22,9 @@ export function Stat({ label, value, hint, tone = 'mute' }: StatProps) {
       <div className={`mt-2 text-3xl font-semibold ${toneClass[tone]}`}>
         {value}
       </div>
-      {hint ? <div className="mt-1 text-xs text-ink-500">{hint}</div> : null}
+      {hint ? (
+        <div className="mt-1 text-xs text-ink-500 dark:text-ink-400">{hint}</div>
+      ) : null}
     </div>
   );
 }

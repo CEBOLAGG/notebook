@@ -33,9 +33,9 @@ export default async function DashboardPage() {
       }
     >
       {dbError ? (
-        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-900/30 dark:text-amber-200">
           <strong>Banco indisponível:</strong> {dbError}. Configure{' '}
-          <code className="rounded bg-amber-100 px-1">MONGODB_URI</code> na
+          <code className="rounded bg-amber-100 px-1 dark:bg-amber-900/60">MONGODB_URI</code> na
           Vercel.
         </div>
       ) : null}
@@ -56,14 +56,14 @@ export default async function DashboardPage() {
         </div>
 
         {recent.length === 0 ? (
-          <div className="card p-10 text-center text-sm text-ink-500">
+          <div className="card p-10 text-center text-sm text-ink-500 dark:text-ink-400">
             Nenhum relatório recebido ainda. Configure o app desktop para
             apontar para esta URL e o primeiro envio aparece aqui.
           </div>
         ) : (
           <div className="card overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="bg-ink-50 text-left text-xs uppercase tracking-wide text-ink-500">
+              <thead className="bg-ink-50 text-left text-xs uppercase tracking-wide text-ink-500 dark:bg-ink-800/60 dark:text-ink-400">
                 <tr>
                   <th className="px-5 py-3">NTB</th>
                   <th className="px-5 py-3">Equipamento</th>
@@ -74,28 +74,28 @@ export default async function DashboardPage() {
                   <th className="px-5 py-3"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-ink-100">
+              <tbody className="divide-y divide-ink-100 dark:divide-ink-700">
                 {recent.map((r) => (
-                  <tr key={r.test_id} className="hover:bg-ink-50">
-                    <td className="px-5 py-3 font-mono text-xs text-ink-900">
+                  <tr key={r.test_id} className="hover:bg-ink-50 dark:hover:bg-ink-700/40">
+                    <td className="px-5 py-3 font-mono text-xs text-ink-900 dark:text-white">
                       {r.ntb_code || '—'}
                     </td>
                     <td className="px-5 py-3">
-                      <div className="font-medium text-ink-900">
+                      <div className="font-medium text-ink-900 dark:text-white">
                         {[r.manufacturer, r.model].filter(Boolean).join(' ') ||
                           '—'}
                       </div>
-                      <div className="text-xs text-ink-500">
+                      <div className="text-xs text-ink-500 dark:text-ink-400">
                         {r.serial ?? 'sem serial'}
                       </div>
                     </td>
-                    <td className="px-5 py-3 text-ink-700">
+                    <td className="px-5 py-3 text-ink-700 dark:text-ink-200">
                       {r.location || '—'}
                     </td>
-                    <td className="px-5 py-3 text-ink-700">
+                    <td className="px-5 py-3 text-ink-700 dark:text-ink-200">
                       {r.technician_name || '—'}
                     </td>
-                    <td className="px-5 py-3 text-ink-700">
+                    <td className="px-5 py-3 text-ink-700 dark:text-ink-200">
                       {formatDate(r.tested_at)}
                     </td>
                     <td className="px-5 py-3">
@@ -104,7 +104,7 @@ export default async function DashboardPage() {
                     <td className="px-5 py-3 text-right">
                       <Link
                         href={`/reports/${r.test_id}`}
-                        className="text-brand-600 hover:underline"
+                        className="text-brand-600 hover:underline dark:text-brand-400"
                       >
                         Abrir
                       </Link>

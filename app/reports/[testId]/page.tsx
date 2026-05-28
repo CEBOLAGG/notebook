@@ -84,13 +84,13 @@ export default async function ReportDetailPage({ params }: PageProps) {
             <Field label="ID" value={report.test_id} mono />
           </dl>
           {report.general_notes ? (
-            <div className="mt-4 rounded-lg bg-ink-50 p-3 text-sm text-ink-700">
+            <div className="mt-4 rounded-lg bg-ink-50 p-3 text-sm text-ink-700 dark:bg-ink-700/40 dark:text-ink-200">
               <div className="label mb-1">Observações gerais</div>
               {report.general_notes}
             </div>
           ) : null}
           {report.repair_notes ? (
-            <div className="mt-4 rounded-lg bg-ink-50 p-3 text-sm text-ink-700">
+            <div className="mt-4 rounded-lg bg-ink-50 p-3 text-sm text-ink-700 dark:bg-ink-700/40 dark:text-ink-200">
               <div className="label mb-1">Notas de reparo</div>
               {report.repair_notes}
             </div>
@@ -100,9 +100,9 @@ export default async function ReportDetailPage({ params }: PageProps) {
 
       <section className="mt-8">
         <h2 className="mb-3 text-lg font-semibold">Testes automáticos</h2>
-        <div className="card divide-y divide-ink-100">
+        <div className="card divide-y divide-ink-100 dark:divide-ink-700">
           {Object.entries(report.tests).length === 0 ? (
-            <div className="p-6 text-sm text-ink-500">
+            <div className="p-6 text-sm text-ink-500 dark:text-ink-400">
               Nenhum teste automático registrado.
             </div>
           ) : (
@@ -114,15 +114,15 @@ export default async function ReportDetailPage({ params }: PageProps) {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-semibold text-ink-900">
+                        <h3 className="text-sm font-semibold text-ink-900 dark:text-white">
                           {labelTest(key)}
                         </h3>
                         <StatusBadge status={t.status} />
                       </div>
-                      <p className="mt-1 text-sm text-ink-700">
+                      <p className="mt-1 text-sm text-ink-700 dark:text-ink-200">
                         {t.details || '—'}
                       </p>
-                      <p className="mt-1 text-xs text-ink-500">
+                      <p className="mt-1 text-xs text-ink-500 dark:text-ink-400">
                         Executado em {formatDate(t.executed_at)}
                       </p>
                     </div>
@@ -148,19 +148,19 @@ export default async function ReportDetailPage({ params }: PageProps) {
       {Object.keys(report.manual_checklist ?? {}).length > 0 ? (
         <section className="mt-8">
           <h2 className="mb-3 text-lg font-semibold">Inspeção física</h2>
-          <div className="card divide-y divide-ink-100">
+          <div className="card divide-y divide-ink-100 dark:divide-ink-700">
             {Object.entries(report.manual_checklist).map(([key, item]) => (
               <article key={key} className="p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-semibold text-ink-900">
+                      <h3 className="text-sm font-semibold text-ink-900 dark:text-white">
                         {labelManual(key)}
                       </h3>
                       <StatusBadge status={item.status} />
                     </div>
                     {item.notes ? (
-                      <p className="mt-1 text-sm text-ink-700">{item.notes}</p>
+                      <p className="mt-1 text-sm text-ink-700 dark:text-ink-200">{item.notes}</p>
                     ) : null}
                   </div>
                 </div>
@@ -206,7 +206,7 @@ function Field({
     <div>
       <dt className="label">{label}</dt>
       <dd
-        className={`mt-0.5 text-ink-900 ${mono ? 'font-mono text-xs' : 'text-sm'}`}
+        className={`mt-0.5 text-ink-900 dark:text-white ${mono ? 'font-mono text-xs' : 'text-sm'}`}
       >
         {value}
       </dd>
@@ -221,14 +221,14 @@ function CommentList({
 }) {
   if (comments.length === 0) return null;
   return (
-    <ul className="mt-4 space-y-3 border-t border-ink-100 pt-4">
+    <ul className="mt-4 space-y-3 border-t border-ink-100 pt-4 dark:border-ink-700">
       {comments.map((c) => (
-        <li key={c.id} className="rounded-lg bg-ink-50 p-3">
-          <div className="flex items-center justify-between text-xs text-ink-500">
-            <span className="font-medium text-ink-700">{c.author}</span>
+        <li key={c.id} className="rounded-lg bg-ink-50 p-3 dark:bg-ink-700/40">
+          <div className="flex items-center justify-between text-xs text-ink-500 dark:text-ink-400">
+            <span className="font-medium text-ink-700 dark:text-ink-200">{c.author}</span>
             <span>{formatDate(c.created_at)}</span>
           </div>
-          <p className="mt-1 whitespace-pre-wrap text-sm text-ink-800">
+          <p className="mt-1 whitespace-pre-wrap text-sm text-ink-800 dark:text-ink-100">
             {c.text}
           </p>
         </li>
