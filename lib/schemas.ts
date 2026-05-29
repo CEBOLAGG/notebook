@@ -70,6 +70,18 @@ export const apiPayloadSchema = z.object({
   asset_tag: z.string().default(''),
   final_classification: z.string(),
   final_classification_override_reason: z.string().nullable().optional(),
+  checklist_mode: z.string().nullable().optional(),
+  stress: z.object({
+    final_score: z.number(),
+    cpu_score: z.number(),
+    cpu_ops_per_sec: z.number(),
+    disk_score: z.number(),
+    disk_read_mb_s: z.number(),
+    disk_write_mb_s: z.number(),
+    gpu_score: z.number(),
+    gpu_name: z.string().nullable().optional(),
+    gpu_matched: z.boolean(),
+  }).nullable().optional(),
 });
 
 export const commentSchema = z.object({

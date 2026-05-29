@@ -20,6 +20,8 @@ export const TEST_LABELS: Record<string, string> = {
   touchpad: 'Touchpad',
   webcam: 'Webcam',
   usb: 'Portas USB',
+  stress: 'Stress test (CPU + disco)',
+  humanizacao: 'Humanização (12h)',
 };
 
 export const MANUAL_LABELS: Record<string, string> = {

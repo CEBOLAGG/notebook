@@ -44,6 +44,74 @@ export const reportsRepo = {
     return doc;
   },
 
+  /**
+   * Busca o relatório mais recente para um número de serial. Usado pelo
+   * fluxo de reteste pós-reparo para localizar o histórico.
+   */
+  async findLatestBySerial(serial: string): Promise<ReportDoc | null> {
+    if (!serial || !serial.trim()) return null;
+    const db = await getDb();
+    const col = db.collection<ReportDoc>(COLLECTION);
+    return col
+      .find({ 'machine.serial': serial.trim() })
+      .sort({ tested_at: -1 })
+      .limit(1)
+      .next();
+  },
+
+  /**
+   * Atualiza um relatório existente com dados de um reteste pós-reparo.
+   * Mantém o histórico das execuções anteriores, atualiza tests/manual_checklist
+   * com os novos resultados e incrementa um contador de retests.
+   */
+  async applyRetest(testId: string, payload: ApiPayload): Promise<ReportDoc | null> {
+    const db = await getDb();
+    const col = db.collection<ReportDoc>(COLLECTION);
+    const now = new Date().toISOString();
+
+    const existing = await col.findOne({ test_id: testId });
+    if (!existing) return null;
+
+    // Histórico: empilha snapshot dos testes anteriores antes de sobrescrever.
+    const historyEntry = {
+      retested_at: now,
+      previous_classification: existing.final_classification,
+      previous_tests: existing.tests,
+      previous_manual_checklist: existing.manual_checklist,
+      retested_components: payload.retested_components ?? [],
+      repair_notes: payload.repair_notes ?? '',
+    };
+
+    const update: Record<string, unknown> = {
+      // Dados novos sobrescrevem os antigos
+      tested_at: payload.tested_at,
+      technician_name: payload.technician_name,
+      machine: payload.machine,
+      storage: payload.storage,
+      battery: payload.battery,
+      tests: payload.tests,
+      manual_checklist: payload.manual_checklist,
+      general_notes: payload.general_notes,
+      asset_tag: payload.asset_tag,
+      final_classification: payload.final_classification,
+      final_classification_override_reason: payload.final_classification_override_reason ?? null,
+      checklist_mode: payload.checklist_mode ?? null,
+      stress: payload.stress ?? existing.stress,
+      retested_at: now,
+    };
+
+    await col.updateOne(
+      { test_id: testId },
+      {
+        $set: update,
+        $inc: { retest_count: 1 },
+        $push: { retest_history: historyEntry as never },
+      },
+    );
+
+    return await col.findOne({ test_id: testId });
+  },
+
   async list(filter: ListFilter = {}): Promise<ReportListItem[]> {
     const db = await getDb();
     const col = db.collection<ReportDoc>(COLLECTION);

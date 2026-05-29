@@ -41,6 +41,12 @@ export function Shell({ title, subtitle, actions, children }: ShellProps) {
             >
               Relatórios
             </Link>
+            <Link
+              href="/ranking"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-ink-700 hover:bg-ink-100 dark:text-ink-200 dark:hover:bg-ink-700"
+            >
+              Ranking
+            </Link>
             <div className="ml-2">
               <ThemeToggle />
             </div>

@@ -91,6 +91,20 @@ export interface ApiPayload {
   asset_tag: string;
   final_classification: string;
   final_classification_override_reason?: string | null;
+  checklist_mode?: string | null;
+  stress?: StressMetrics | null;
+}
+
+export interface StressMetrics {
+  final_score: number;
+  cpu_score: number;
+  cpu_ops_per_sec: number;
+  disk_score: number;
+  disk_read_mb_s: number;
+  disk_write_mb_s: number;
+  gpu_score: number;
+  gpu_name?: string | null;
+  gpu_matched: boolean;
 }
 
 export interface CommentDoc {
