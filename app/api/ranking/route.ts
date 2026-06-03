@@ -64,11 +64,18 @@ export async function GET(req: Request) {
       ntb_code: d.machine?.ntb_code ?? '',
       serial: d.machine?.serial ?? '',
       final_score: d.stress?.final_score ?? 0,
-      cpu_score: d.stress?.cpu_score ?? 0,
+      cpu_single_thread: d.stress?.cpu_single_thread ?? 0,
+      cpu_multi_thread: d.stress?.cpu_multi_thread ?? 0,
+      cpu_efficiency: d.stress?.cpu_efficiency ?? 0,
+      cpu_threads: d.stress?.cpu_threads ?? 0,
+      gpu_graphics: d.stress?.gpu_graphics ?? 0,
+      gpu_compute: d.stress?.gpu_compute ?? 0,
+      gpu_bandwidth: d.stress?.gpu_bandwidth ?? 0,
       disk_score: d.stress?.disk_score ?? 0,
       disk_read_mb_s: d.stress?.disk_read_mb_s ?? 0,
       disk_write_mb_s: d.stress?.disk_write_mb_s ?? 0,
-      gpu_score: d.stress?.gpu_score ?? 0,
+      vram_ok: d.stress?.vram_ok ?? true,
+      vram_allocated_mb: d.stress?.vram_allocated_mb ?? 0,
     }));
 
     // Agrupa quando solicitado

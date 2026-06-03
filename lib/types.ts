@@ -97,14 +97,25 @@ export interface ApiPayload {
 
 export interface StressMetrics {
   final_score: number;
-  cpu_score: number;
-  cpu_ops_per_sec: number;
+  // CPU
+  cpu_single_thread: number;
+  cpu_multi_thread: number;
+  cpu_efficiency: number;
+  cpu_threads: number;
+  // GPU
+  gpu_graphics: number;
+  gpu_compute: number;
+  gpu_bandwidth: number;
+  gpu_name?: string | null;
+  gpu_feature_level?: string | null;
+  // Disco
   disk_score: number;
   disk_read_mb_s: number;
   disk_write_mb_s: number;
-  gpu_score: number;
-  gpu_name?: string | null;
-  gpu_matched: boolean;
+  // VRAM
+  vram_ok: boolean;
+  vram_allocated_mb: number;
+  vram_mismatch_count: number;
 }
 
 export interface CommentDoc {

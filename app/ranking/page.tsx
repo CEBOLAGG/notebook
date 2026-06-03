@@ -19,11 +19,18 @@ interface MachineRow {
   model: string;
   ntb_code: string;
   final_score: number;
-  cpu_score: number;
+  cpu_single_thread: number;
+  cpu_multi_thread: number;
+  cpu_efficiency: number;
+  cpu_threads: number;
+  gpu_graphics: number;
+  gpu_compute: number;
+  gpu_bandwidth: number;
   disk_score: number;
   disk_read_mb_s: number;
   disk_write_mb_s: number;
-  gpu_score: number;
+  vram_ok: boolean;
+  vram_allocated_mb: number;
 }
 
 interface Group {
@@ -59,21 +66,32 @@ async function loadGroups(by: string, cpu?: string, gpu?: string): Promise<Group
       .limit(500)
       .toArray();
 
-    const items: MachineRow[] = docs.map((d) => ({
-      test_id: d.test_id as string,
-      tested_at: d.tested_at as string,
-      cpu: (d.machine as { cpu?: string })?.cpu ?? '',
-      gpu: (d.stress as { gpu_name?: string })?.gpu_name ?? '',
-      manufacturer: (d.machine as { manufacturer?: string })?.manufacturer ?? '',
-      model: (d.machine as { model?: string })?.model ?? '',
-      ntb_code: (d.machine as { ntb_code?: string })?.ntb_code ?? '',
-      final_score: (d.stress as { final_score?: number })?.final_score ?? 0,
-      cpu_score: (d.stress as { cpu_score?: number })?.cpu_score ?? 0,
-      disk_score: (d.stress as { disk_score?: number })?.disk_score ?? 0,
-      disk_read_mb_s: (d.stress as { disk_read_mb_s?: number })?.disk_read_mb_s ?? 0,
-      disk_write_mb_s: (d.stress as { disk_write_mb_s?: number })?.disk_write_mb_s ?? 0,
-      gpu_score: (d.stress as { gpu_score?: number })?.gpu_score ?? 0,
-    }));
+    const items: MachineRow[] = docs.map((d) => {
+      const s = (d.stress ?? {}) as Record<string, number | string | boolean | null | undefined>;
+      const m = (d.machine ?? {}) as Record<string, string | undefined>;
+      return {
+        test_id: d.test_id as string,
+        tested_at: d.tested_at as string,
+        cpu: m.cpu ?? '',
+        gpu: (s.gpu_name as string) ?? '',
+        manufacturer: m.manufacturer ?? '',
+        model: m.model ?? '',
+        ntb_code: m.ntb_code ?? '',
+        final_score: (s.final_score as number) ?? 0,
+        cpu_single_thread: (s.cpu_single_thread as number) ?? 0,
+        cpu_multi_thread: (s.cpu_multi_thread as number) ?? 0,
+        cpu_efficiency: (s.cpu_efficiency as number) ?? 0,
+        cpu_threads: (s.cpu_threads as number) ?? 0,
+        gpu_graphics: (s.gpu_graphics as number) ?? 0,
+        gpu_compute: (s.gpu_compute as number) ?? 0,
+        gpu_bandwidth: (s.gpu_bandwidth as number) ?? 0,
+        disk_score: (s.disk_score as number) ?? 0,
+        disk_read_mb_s: (s.disk_read_mb_s as number) ?? 0,
+        disk_write_mb_s: (s.disk_write_mb_s as number) ?? 0,
+        vram_ok: (s.vram_ok as boolean) ?? true,
+        vram_allocated_mb: (s.vram_allocated_mb as number) ?? 0,
+      };
+    });
 
     const buckets = new Map<string, MachineRow[]>();
     for (const item of items) {
@@ -111,7 +129,7 @@ export default async function RankingPage({ searchParams }: PageProps) {
   return (
     <Shell
       title="Ranking de desempenho"
-      subtitle="Compare máquinas com mesmas specs (CPU/GPU) pelos resultados do stress test"
+      subtitle="Compare máquinas com mesmas specs (CPU/GPU) pelos resultados do benchmark suite"
     >
       <form method="get" className="card mb-6 flex flex-wrap items-end gap-3 p-4">
         <div>
@@ -135,7 +153,7 @@ export default async function RankingPage({ searchParams }: PageProps) {
 
       {groups.length === 0 ? (
         <div className="card p-10 text-center text-sm text-ink-500 dark:text-ink-400">
-          Nenhum relatório com stress test ainda. Rode um checklist no modo Detalhado.
+          Nenhum relatório com benchmark ainda. Rode um checklist no modo Detalhado.
         </div>
       ) : (
         <div className="space-y-6">
@@ -151,52 +169,75 @@ export default async function RankingPage({ searchParams }: PageProps) {
                 <div className="flex gap-6 text-right">
                   <Stat label="Melhor" value={g.best} tone="ok"/>
                   <Stat label="Média" value={g.avg} tone="brand"/>
-                  <Stat label="Pior" value={g.worst} tone={g.worst < 300 ? 'bad' : 'mute'}/>
+                  <Stat label="Pior" value={g.worst} tone={g.worst < 400 ? 'bad' : 'mute'}/>
                 </div>
               </div>
-              <table className="w-full text-sm">
-                <thead className="bg-ink-50 text-left text-xs uppercase tracking-wide text-ink-500 dark:bg-ink-800/60 dark:text-ink-400">
-                  <tr>
-                    <th className="px-5 py-3">Pos.</th>
-                    <th className="px-5 py-3">NTB</th>
-                    <th className="px-5 py-3">Equipamento</th>
-                    <th className="px-5 py-3">Final</th>
-                    <th className="px-5 py-3">CPU</th>
-                    <th className="px-5 py-3">Disco</th>
-                    <th className="px-5 py-3">GPU</th>
-                    <th className="px-5 py-3">Quando</th>
-                    <th className="px-5 py-3"/>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-ink-100 dark:divide-ink-700">
-                  {g.machines.map((m, i) => (
-                    <tr key={m.test_id} className="hover:bg-ink-50 dark:hover:bg-ink-700/40">
-                      <td className="px-5 py-3 font-semibold text-ink-900 dark:text-white">#{i + 1}</td>
-                      <td className="px-5 py-3 font-mono text-xs">{m.ntb_code || '—'}</td>
-                      <td className="px-5 py-3">
-                        <div className="font-medium text-ink-900 dark:text-white">
-                          {[m.manufacturer, m.model].filter(Boolean).join(' ') || '—'}
-                        </div>
-                      </td>
-                      <td className="px-5 py-3 font-semibold">{m.final_score}</td>
-                      <td className="px-5 py-3 text-ink-700 dark:text-ink-200">{m.cpu_score}</td>
-                      <td className="px-5 py-3 text-ink-700 dark:text-ink-200">
-                        {m.disk_score}
-                        <div className="text-xs text-ink-400">
-                          ↓ {m.disk_read_mb_s.toFixed(0)} MB/s • ↑ {m.disk_write_mb_s.toFixed(0)} MB/s
-                        </div>
-                      </td>
-                      <td className="px-5 py-3 text-ink-700 dark:text-ink-200">{m.gpu_score}</td>
-                      <td className="px-5 py-3 text-ink-700 dark:text-ink-200">{formatDate(m.tested_at)}</td>
-                      <td className="px-5 py-3 text-right">
-                        <Link href={`/reports/${m.test_id}`} className="text-brand-600 hover:underline dark:text-brand-400">
-                          Abrir
-                        </Link>
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-ink-50 text-left text-xs uppercase tracking-wide text-ink-500 dark:bg-ink-800/60 dark:text-ink-400">
+                    <tr>
+                      <th className="px-4 py-3">Pos.</th>
+                      <th className="px-4 py-3">NTB</th>
+                      <th className="px-4 py-3">Equipamento</th>
+                      <th className="px-4 py-3">Final</th>
+                      <th className="px-4 py-3">CPU ST/MT</th>
+                      <th className="px-4 py-3">GPU (G/C/B)</th>
+                      <th className="px-4 py-3">Disco</th>
+                      <th className="px-4 py-3">VRAM</th>
+                      <th className="px-4 py-3">Quando</th>
+                      <th className="px-4 py-3"/>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-ink-100 dark:divide-ink-700">
+                    {g.machines.map((m, i) => (
+                      <tr key={m.test_id} className="hover:bg-ink-50 dark:hover:bg-ink-700/40">
+                        <td className="px-4 py-3 font-semibold text-ink-900 dark:text-white">#{i + 1}</td>
+                        <td className="px-4 py-3 font-mono text-xs">{m.ntb_code || '—'}</td>
+                        <td className="px-4 py-3">
+                          <div className="font-medium text-ink-900 dark:text-white">
+                            {[m.manufacturer, m.model].filter(Boolean).join(' ') || '—'}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 font-semibold text-brand-600 dark:text-brand-400">{m.final_score}</td>
+                        <td className="px-4 py-3 text-ink-700 dark:text-ink-200">
+                          {m.cpu_single_thread}
+                          <span className="mx-1 text-ink-300">/</span>
+                          {m.cpu_multi_thread}
+                          <div className="text-xs text-ink-400">
+                            {m.cpu_threads}T • efic {m.cpu_efficiency}%
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-ink-700 dark:text-ink-200">
+                          {m.gpu_graphics}
+                          <span className="mx-1 text-ink-300">/</span>
+                          {m.gpu_compute}
+                          <span className="mx-1 text-ink-300">/</span>
+                          {m.gpu_bandwidth}
+                        </td>
+                        <td className="px-4 py-3 text-ink-700 dark:text-ink-200">
+                          {m.disk_score}
+                          <div className="text-xs text-ink-400">
+                            ↓ {m.disk_read_mb_s.toFixed(0)} • ↑ {m.disk_write_mb_s.toFixed(0)} MB/s
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-ink-700 dark:text-ink-200">
+                          {m.vram_ok ? (
+                            <span className="text-ok dark:text-green-400">{m.vram_allocated_mb} MB ✓</span>
+                          ) : (
+                            <span className="text-bad dark:text-red-400">corrompida</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-ink-700 dark:text-ink-200">{formatDate(m.tested_at)}</td>
+                        <td className="px-4 py-3 text-right">
+                          <Link href={`/reports/${m.test_id}`} className="text-brand-600 hover:underline dark:text-brand-400">
+                            Abrir
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           ))}
         </div>
