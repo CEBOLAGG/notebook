@@ -62,7 +62,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
       <section className="grid gap-4 lg:grid-cols-[2fr_1fr]">
         <div className="card p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Identificação</h2>
+            <h2 className="text-lg font-semibold text-ink-900 dark:text-white">Identificação</h2>
             <ClassificationBadge value={report.final_classification} />
           </div>
           <dl className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
@@ -107,7 +107,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
           </dl>
         </div>
         <div className="card p-6">
-          <h2 className="mb-4 text-lg font-semibold">Resumo</h2>
+          <h2 className="mb-4 text-lg font-semibold text-ink-900 dark:text-white">Resumo</h2>
           <dl className="space-y-3 text-sm">
             <Field label="Tipo" value={report.report_type === 'retest' ? 'Reteste' : 'Checklist completo'} />
             <Field label="Técnico" value={report.technician_name || '—'} />
@@ -131,7 +131,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
       </section>
 
       <section className="mt-8">
-        <h2 className="mb-3 text-lg font-semibold">Testes automáticos</h2>
+        <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">Testes automáticos</h2>
         <div className="card divide-y divide-ink-100 dark:divide-ink-700">
           {Object.entries(report.tests).length === 0 ? (
             <div className="p-6 text-sm text-ink-500 dark:text-ink-400">
@@ -179,7 +179,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
 
       {report.stress ? (
         <section className="mt-8">
-          <h2 className="mb-3 text-lg font-semibold">Benchmark e stress</h2>
+          <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">Benchmark e stress</h2>
           <div className="card p-5">
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               <StressStat label="Nota final" value={report.stress.final_score} />
@@ -213,7 +213,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
 
       {untestedTests.length > 0 ? (
         <section className="mt-8">
-          <h2 className="mb-3 text-lg font-semibold">Testes não realizados</h2>
+          <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">Testes não realizados</h2>
           <div className="card p-5">
             <div className="flex flex-wrap gap-2">
               {untestedTests.map((key) => (
@@ -231,7 +231,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
 
       {Object.keys(report.manual_checklist ?? {}).length > 0 ? (
         <section className="mt-8">
-          <h2 className="mb-3 text-lg font-semibold">Inspeção física</h2>
+          <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">Inspeção física</h2>
           <div className="card divide-y divide-ink-100 dark:divide-ink-700">
             {Object.entries(report.manual_checklist).map(([key, item]) => (
               <article key={key} className="p-5">
@@ -263,7 +263,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
 
       {(report.inspection_photos ?? []).length > 0 ? (
         <section className="mt-8">
-          <h2 className="mb-3 text-lg font-semibold">Fotos da inspeção física</h2>
+          <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">Fotos da inspeção física</h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {(report.inspection_photos ?? []).map((p) => (
               <figure key={p.item_key} className="card overflow-hidden">
@@ -286,7 +286,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
       ) : null}
 
       <section className="mt-8">
-        <h2 className="mb-3 text-lg font-semibold">Comentários gerais</h2>
+        <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">Comentários gerais</h2>
         <div className="card p-5">
           <CommentList comments={commentsByKey.get(GENERAL_KEY) ?? []} />
           <CommentForm

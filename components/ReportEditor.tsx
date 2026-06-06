@@ -105,7 +105,7 @@ export function ReportEditor({ report }: { report: ReportDoc }) {
   return (
     <div className="card mt-4 p-6">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Editar relatório</h2>
+        <h2 className="text-lg font-semibold text-ink-900 dark:text-white">Editar relatório</h2>
         <button onClick={() => setOpen(false)} className="btn-ghost">Fechar</button>
       </div>
 
@@ -135,7 +135,7 @@ export function ReportEditor({ report }: { report: ReportDoc }) {
 
       {tests.length > 0 ? (
         <div className="mt-6">
-          <h3 className="mb-2 text-sm font-semibold">Testes automáticos</h3>
+          <h3 className="mb-2 text-sm font-semibold text-ink-900 dark:text-white">Testes automáticos</h3>
           <div className="space-y-2">
             {tests.map((t, i) => (
               <div key={t.key} className="grid items-center gap-2 sm:grid-cols-[160px_160px_1fr]">
@@ -155,7 +155,7 @@ export function ReportEditor({ report }: { report: ReportDoc }) {
 
       {manual.length > 0 ? (
         <div className="mt-6">
-          <h3 className="mb-2 text-sm font-semibold">Inspeção manual</h3>
+          <h3 className="mb-2 text-sm font-semibold text-ink-900 dark:text-white">Inspeção manual</h3>
           <div className="space-y-2">
             {manual.map((item, i) => (
               <div key={item.key} className="grid items-center gap-2 sm:grid-cols-[160px_160px_1fr]">

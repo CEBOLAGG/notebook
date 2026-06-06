@@ -1,14 +1,26 @@
 {
-  "version": "1.1.0",
-  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.1.0/NotebookCheck.exe",
-  "sha256": "65ED1C6751919FFCC9CC38F94F2DFF64FEAE781B99ECCEA0485023633A854258",
+  "version": "1.2.0",
+  "date": "2026-06-06",
+  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.2.0/NotebookCheck.exe",
+  "sha256": "A0BEC6588AA8B5F6F8224C9E033CAA9D41524F18C29F50DB3409761C6CAE3CA0",
   "changelog": [
-    "Auto-atualização: o app agora se atualiza sozinho ao abrir",
-    "Tela inicial mostra as novidades de cada versão",
-    "Inspeção física por QR code e fotos pelo celular",
-    "Benchmark separado por CPU, GPU, VRAM, RAM e disco",
-    "Bateria com capacidade máxima, ciclos e vida útil via CrystalDiskInfo",
-    "Pergunta de teclado numérico e retroiluminado",
-    "Edição completa dos relatórios pelo painel web"
+    "Correção: textos do relatório ficavam ilegíveis (brancos) no painel ao abrir um relatório",
+    "Títulos e campos do relatório agora com cor explícita nos temas claro e escuro",
+    "Histórico de versões acumulado no changelog"
+  ],
+  "history": [
+    {
+      "version": "1.1.0",
+      "date": null,
+      "changelog": [
+        "Auto-atualização: o app agora se atualiza sozinho ao abrir",
+        "Tela inicial mostra as novidades de cada versão",
+        "Inspeção física por QR code e fotos pelo celular",
+        "Benchmark separado por CPU, GPU, VRAM, RAM e disco",
+        "Bateria com capacidade máxima, ciclos e vida útil via CrystalDiskInfo",
+        "Pergunta de teclado numérico e retroiluminado",
+        "Edição completa dos relatórios pelo painel web"
+      ]
+    }
   ]
 }
