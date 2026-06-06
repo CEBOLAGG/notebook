@@ -110,6 +110,7 @@ export const apiPayloadSchema = z.object({
     note: z.string().nullable().optional(),
     captured_at: z.string(),
   })).optional().default([]),
+  inspection_slug: z.string().nullable().optional(),
 });
 
 export const commentSchema = z.object({

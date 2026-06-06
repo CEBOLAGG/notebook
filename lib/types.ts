@@ -109,6 +109,7 @@ export interface ApiPayload {
   checklist_mode?: string | null;
   stress?: StressMetrics | null;
   inspection_photos?: InspectionPhotoPayload[];
+  inspection_slug?: string | null;
 }
 
 export interface StressMetrics {

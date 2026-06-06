@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { getDb } from './mongo';
+import { inspectionsRepo } from './inspections';
 import type { ApiPayload, CommentDoc, ReportDoc, ReportListItem } from './types';
 
 const COLLECTION = 'reports';
@@ -34,8 +35,30 @@ export const reportsRepo = {
       return existing;
     }
 
+    // Mescla as fotos de inspeção capturadas pelo celular (coleção separada,
+    // vinculada pelo slug que o app gerou). Se o app já enviou fotos no
+    // payload, mantém as do payload; senão, puxa da sessão de inspeção.
+    let inspectionPhotos = payload.inspection_photos ?? [];
+    if ((!inspectionPhotos || inspectionPhotos.length === 0) && payload.inspection_slug) {
+      try {
+        const insp = await inspectionsRepo.get(payload.inspection_slug);
+        if (insp?.photos?.length) {
+          inspectionPhotos = insp.photos.map((p) => ({
+            item_key: p.item_key,
+            label: p.label,
+            image_base64: p.image_base64,
+            note: p.note ?? null,
+            captured_at: p.captured_at,
+          }));
+        }
+      } catch (err) {
+        console.warn('[reports] falha mesclando fotos de inspeção', err);
+      }
+    }
+
     const doc: ReportDoc = {
       ...payload,
+      inspection_photos: inspectionPhotos,
       received_at: now,
       comments: [],
     };
