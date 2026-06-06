@@ -18,3 +18,40 @@ export async function GET(
   void _id;
   return NextResponse.json(rest);
 }
+
+/**
+ * Edição manual do relatório pelo técnico no site. Recebe um objeto parcial
+ * (campos a alterar) e aplica via $set. Ex.: { "machine.ntb_code": "NTB-9",
+ * "final_classification": "Aprovado", "general_notes": "..." }.
+ */
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ testId: string }> },
+) {
+  const { testId } = await params;
+  let patch: Record<string, unknown>;
+  try {
+    patch = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'JSON inválido' }, { status: 400 });
+  }
+  if (!patch || typeof patch !== 'object' || Array.isArray(patch)) {
+    return NextResponse.json({ error: 'corpo inválido' }, { status: 400 });
+  }
+
+  try {
+    const updated = await reportsRepo.updateFields(testId, patch);
+    if (!updated) {
+      return NextResponse.json({ error: 'not_found' }, { status: 404 });
+    }
+    const { _id, ...rest } = updated as unknown as { _id?: unknown } & Record<string, unknown>;
+    void _id;
+    return NextResponse.json({ ok: true, report: rest });
+  } catch (err) {
+    console.error('[reports.PATCH]', err);
+    return NextResponse.json(
+      { error: 'storage_error', message: (err as Error).message },
+      { status: 500 },
+    );
+  }
+}

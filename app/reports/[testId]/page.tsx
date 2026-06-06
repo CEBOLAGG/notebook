@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { Shell } from '@/components/Shell';
 import { Badge, ClassificationBadge, StatusBadge } from '@/components/StatusBadge';
 import { CommentForm } from '@/components/CommentForm';
+import { ReportEditor } from '@/components/ReportEditor';
 import { reportsRepo } from '@/lib/repository';
 import {
   formatDate,
@@ -23,8 +24,11 @@ const GENERAL_KEY = '_general';
 
 export default async function ReportDetailPage({ params }: PageProps) {
   const { testId } = await params;
-  const report = await reportsRepo.getById(testId);
-  if (!report) notFound();
+  const reportRaw = await reportsRepo.getById(testId);
+  if (!reportRaw) notFound();
+  // Remove _id (ObjectId não serializa para Client Components).
+  const { _id, ...report } = reportRaw as unknown as { _id?: unknown } & typeof reportRaw;
+  void _id;
 
   const comments = report.comments ?? [];
   const commentsByKey = new Map<string, typeof comments>();
@@ -53,6 +57,8 @@ export default async function ReportDetailPage({ params }: PageProps) {
         </Link>
       }
     >
+      <ReportEditor report={report} />
+
       <section className="grid gap-4 lg:grid-cols-[2fr_1fr]">
         <div className="card p-6">
           <div className="mb-4 flex items-center justify-between">

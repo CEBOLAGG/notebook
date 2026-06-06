@@ -227,6 +227,30 @@ export const reportsRepo = {
     return col.findOne({ test_id: testId });
   },
 
+  /**
+   * Atualização livre de campos do relatório (edição manual pelo técnico no
+   * site). Aceita um objeto parcial e aplica via $set. Protege chaves
+   * imutáveis (_id, test_id, comments, received_at).
+   */
+  async updateFields(testId: string, patch: Record<string, unknown>): Promise<ReportDoc | null> {
+    const db = await getDb();
+    const col = db.collection<ReportDoc>(COLLECTION);
+
+    const blocked = new Set(['_id', 'test_id', 'comments', 'received_at']);
+    const set: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(patch)) {
+      if (blocked.has(k)) continue;
+      set[k] = v;
+    }
+    set['edited_at'] = new Date().toISOString();
+
+    if (Object.keys(set).length === 0) return col.findOne({ test_id: testId });
+
+    const r = await col.updateOne({ test_id: testId }, { $set: set });
+    if (r.matchedCount === 0) return null;
+    return col.findOne({ test_id: testId });
+  },
+
   async addComment(
     testId: string,
     input: { test_key: string; author: string; text: string },
