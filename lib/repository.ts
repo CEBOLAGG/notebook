@@ -28,13 +28,6 @@ export const reportsRepo = {
     const col = db.collection<ReportDoc>(COLLECTION);
     const now = new Date().toISOString();
 
-    const existing = await col.findOne({ test_id: payload.test_id });
-    if (existing) {
-      // Idempotência: se o desktop reenviar o mesmo test_id mantemos o doc
-      // existente (incluindo comentários adicionados pela equipe).
-      return existing;
-    }
-
     // Mescla as fotos de inspeção capturadas pelo celular (coleção separada,
     // vinculada pelo slug que o app gerou). Se o app já enviou fotos no
     // payload, mantém as do payload; senão, puxa da sessão de inspeção.
@@ -54,6 +47,33 @@ export const reportsRepo = {
       } catch (err) {
         console.warn('[reports] falha mesclando fotos de inspeção', err);
       }
+    }
+
+    const existing = await col.findOne({ test_id: payload.test_id });
+
+    if (existing) {
+      // REENVIO do mesmo test_id: NÃO cria outro relatório. Atualiza os campos
+      // vindos do app, mas PRESERVA o que é gerenciado pelo site:
+      //   - comments (comentários da equipe)
+      //   - received_at (carimbo do 1º recebimento)
+      //   - edited_at e quaisquer edições manuais feitas no painel
+      // Por isso usamos $set só nos campos do payload, sem tocar em comments.
+      const update: Record<string, unknown> = {
+        ...payload,
+        // Se o app não trouxe fotos novas, mantém as que já existiam no doc.
+        inspection_photos: inspectionPhotos.length > 0
+          ? inspectionPhotos
+          : existing.inspection_photos ?? [],
+        resent_at: now,
+      };
+      // Nunca sobrescreve estes:
+      delete (update as Record<string, unknown>)['comments'];
+      delete (update as Record<string, unknown>)['received_at'];
+      delete (update as Record<string, unknown>)['_id'];
+
+      await col.updateOne({ test_id: payload.test_id }, { $set: update });
+      const merged = await col.findOne({ test_id: payload.test_id });
+      return merged ?? existing;
     }
 
     const doc: ReportDoc = {

@@ -5,10 +5,10 @@ import { Badge, ClassificationBadge, StatusBadge } from '@/components/StatusBadg
 import { CommentForm } from '@/components/CommentForm';
 import { ReportEditor } from '@/components/ReportEditor';
 import { reportsRepo } from '@/lib/repository';
+import { INSPECTION_ITEMS } from '@/lib/inspection-items';
 import {
   formatDate,
   formatGb,
-  labelManual,
   labelTest,
   statusToTone,
 } from '@/lib/format';
@@ -193,8 +193,6 @@ export default async function ReportDetailPage({ params }: PageProps) {
                 hint={report.stress.disk_read_mb_s != null
                   ? `↓${Math.round(report.stress.disk_read_mb_s)} ↑${Math.round(report.stress.disk_write_mb_s ?? 0)} MB/s`
                   : undefined} />
-              <StressStat label="Geekbench Single" value={report.stress.geekbench_single} />
-              <StressStat label="Geekbench Multi" value={report.stress.geekbench_multi} />
             </div>
             <div className="mt-4 flex flex-wrap gap-3 text-sm">
               {report.stress.gpu_name ? (
@@ -229,37 +227,56 @@ export default async function ReportDetailPage({ params }: PageProps) {
         </section>
       ) : null}
 
-      {Object.keys(report.manual_checklist ?? {}).length > 0 ? (
-        <section className="mt-8">
-          <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">Inspeção física</h2>
-          <div className="card divide-y divide-ink-100 dark:divide-ink-700">
-            {Object.entries(report.manual_checklist).map(([key, item]) => (
-              <article key={key} className="p-5">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-semibold text-ink-900 dark:text-white">
-                        {labelManual(key)}
-                      </h3>
-                      <StatusBadge status={item.status} />
+      {(() => {
+        // Inspeção física é baseada em FOTOS (fluxo do QR no celular). Cada item
+        // esperado do catálogo aparece como "OK" se a foto chegou, ou
+        // "Não realizado" se o técnico não enviou. Não usamos mais o status
+        // default "OK" do manual_checklist (que aparecia OK mesmo sem foto).
+        const photos = report.inspection_photos ?? [];
+        const photoByKey = new Map(photos.map((p) => [p.item_key, p]));
+        // Só mostra a seção se houve intenção de inspeção (algum item esperado).
+        if (INSPECTION_ITEMS.length === 0) return null;
+        return (
+          <section className="mt-8">
+            <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">Inspeção física</h2>
+            <div className="card divide-y divide-ink-100 dark:divide-ink-700">
+              {INSPECTION_ITEMS.map((def) => {
+                const has = photoByKey.has(def.key);
+                return (
+                  <article key={def.key} className="p-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm font-semibold text-ink-900 dark:text-white">
+                            {def.label}
+                          </h3>
+                          {has ? (
+                            <StatusBadge status="OK" />
+                          ) : (
+                            <Badge text="Não realizado" tone="mute" />
+                          )}
+                        </div>
+                        {!has ? (
+                          <p className="mt-1 text-xs text-ink-500 dark:text-ink-400">
+                            Foto não enviada pelo técnico.
+                          </p>
+                        ) : null}
+                      </div>
                     </div>
-                    {item.notes ? (
-                      <p className="mt-1 text-sm text-ink-700 dark:text-ink-200">{item.notes}</p>
-                    ) : null}
-                  </div>
-                </div>
-                <CommentList comments={commentsByKey.get(key) ?? []} />
-                <CommentForm
-                  testId={report.test_id}
-                  testKey={key}
-                  compact
-                  placeholder="Comente este item"
-                />
-              </article>
-            ))}
-          </div>
-        </section>
-      ) : null}
+                    <CommentList comments={commentsByKey.get(def.key) ?? []} />
+                    <CommentForm
+                      testId={report.test_id}
+                      testKey={def.key}
+                      compact
+                      placeholder="Comente este item"
+                    />
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })()}
 
       {(report.inspection_photos ?? []).length > 0 ? (
         <section className="mt-8">

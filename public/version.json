@@ -1,14 +1,56 @@
 {
-  "version": "1.2.2",
+  "version": "1.2.6",
   "date": "2026-06-06",
-  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.2.2/NotebookCheck.exe",
-  "sha256": "39566E84633326407D57F1162858CDE0BF570278D2F0693EAE7A3EDCAAB2C4BD",
+  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.2.6/NotebookCheck.exe",
+  "sha256": "C9DA7EED392C97F05EB8B26242F28659E3B72D087F03DDC42041D6772388F621",
   "changelog": [
-    "Manifesto de versão agora servido pelo MongoDB (atualizações sem depender de redeploy do site)",
-    "Verificação de versão com fallback automático para o arquivo estático",
-    "Publicação de novas versões totalmente automatizada"
+    "Novo botão \"Rodar todos os testes\": executa CPU, GPU, disco, VRAM e RAM em sequência",
+    "Nota final do benchmark de volta, consolidando todos os testes",
+    "Reenvio do relatório agora atualiza o existente em vez de duplicar (preserva comentários e edições do site)",
+    "Geekbench removido do painel web",
+    "Inspeção física no site: itens sem foto aparecem como \"Não realizado\" em vez de OK"
   ],
   "history": [
+    {
+      "version": "1.2.5",
+      "date": "2026-06-06",
+      "changelog": [
+        "Inspeção física: teclado retroiluminado e numérico agora têm sinalização vermelha visível quando faltam",
+        "Aviso destacado ao tentar finalizar sem completar os campos obrigatórios",
+        "Não é mais possível avançar para o resumo sem finalizar as fotos da inspeção física no celular",
+        "Resumo agora mostra as fotos enviadas pelo celular",
+        "Resumo agora mostra as notas do benchmark (CPU, GPU, disco, VRAM e RAM)"
+      ]
+    },
+    {
+      "version": "1.2.4",
+      "date": "2026-06-06",
+      "changelog": [
+        "Barra de progresso dos benchmarks corrigida em todos os testes (agora avança suave de 0 a 100%)",
+        "Teste de CPU mostra progresso contínuo em vez de travar entre as fases",
+        "Teste de disco agora completa a barra até 100%",
+        "Teste de VRAM não derruba mais o driver: uso limitado a uma fração segura da memória da GPU",
+        "Temperatura da GPU corrigida (não mostra mais valores impossíveis como 255 graus)"
+      ]
+    },
+    {
+      "version": "1.2.3",
+      "date": "2026-06-06",
+      "changelog": [
+        "Barra de progresso dos benchmarks agora vai corretamente de 0 a 100% em cada teste",
+        "Etapa de desempenho voltou a permitir rolagem da tela",
+        "Teste de VRAM mais estável: não derruba mais o aplicativo (uso de VRAM mais conservador e tratamento de erros do driver)"
+      ]
+    },
+    {
+      "version": "1.2.2",
+      "date": "2026-06-06",
+      "changelog": [
+        "Manifesto de versão agora servido pelo MongoDB (atualizações sem depender de redeploy do site)",
+        "Verificação de versão com fallback automático para o arquivo estático",
+        "Publicação de novas versões totalmente automatizada"
+      ]
+    },
     {
       "version": "1.2.1",
       "date": "2026-06-06",
