@@ -82,6 +82,38 @@ export const reportsRepo = {
       .next();
   },
 
+  /** Lista todos os relatórios de um serial (para seleção no reteste). */
+  async findAllBySerial(serial: string): Promise<ReportListItem[]> {
+    if (!serial || !serial.trim()) return [];
+    const db = await getDb();
+    const col = db.collection<ReportDoc>(COLLECTION);
+    const docs = await col
+      .find({ 'machine.serial': serial.trim() }, {
+        projection: {
+          test_id: 1, report_type: 1, tested_at: 1, received_at: 1,
+          technician_name: 1, 'machine.ntb_code': 1, 'machine.location': 1,
+          'machine.manufacturer': 1, 'machine.model': 1, 'machine.serial': 1,
+          final_classification: 1,
+        },
+      })
+      .sort({ tested_at: -1 })
+      .limit(50)
+      .toArray();
+    return docs.map((d) => ({
+      test_id: d.test_id,
+      report_type: d.report_type,
+      tested_at: d.tested_at,
+      received_at: d.received_at,
+      technician_name: d.technician_name,
+      ntb_code: d.machine?.ntb_code ?? '',
+      location: d.machine?.location ?? '',
+      manufacturer: d.machine?.manufacturer ?? null,
+      model: d.machine?.model ?? null,
+      serial: d.machine?.serial ?? null,
+      final_classification: d.final_classification,
+    }));
+  },
+
   /**
    * Atualiza um relatório existente com dados de um reteste pós-reparo.
    * Mantém o histórico das execuções anteriores, atualiza tests/manual_checklist

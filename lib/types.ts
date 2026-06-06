@@ -47,6 +47,7 @@ export interface MachinePayload {
   ntb_code: string;
   location: string;
   keyboard_backlight: string;
+  has_numeric_keypad?: boolean | null;
 }
 
 export interface StoragePayload {

@@ -10,13 +10,20 @@ export const dynamic = 'force-dynamic';
  * a aplicação encontre o histórico anterior do equipamento.
  */
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ serial: string }> },
 ) {
   const { serial } = await params;
   const decoded = decodeURIComponent(serial ?? '');
   if (!decoded || !decoded.trim()) {
     return NextResponse.json({ error: 'serial vazio' }, { status: 400 });
+  }
+
+  // ?all=1 lista todos os relatórios do serial (para seleção no reteste).
+  const url = new URL(req.url);
+  if (url.searchParams.get('all') === '1') {
+    const items = await reportsRepo.findAllBySerial(decoded);
+    return NextResponse.json({ items });
   }
 
   const doc = await reportsRepo.findLatestBySerial(decoded);

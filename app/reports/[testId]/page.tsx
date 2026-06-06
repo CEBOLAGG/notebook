@@ -37,6 +37,12 @@ export default async function ReportDetailPage({ params }: PageProps) {
 
   const m = report.machine;
 
+  // Conjunto de testes automáticos esperados; os ausentes em report.tests
+  // são considerados "não realizados".
+  const EXPECTED_TESTS = ['ram', 'bateria', 'carregador', 'hdmi', 'wifi', 'bluetooth', 'internet', 'audio', 'microfone', 'webcam', 'teclado', 'touchpad', 'tela_pixels', 'stress'];
+  const doneKeys = new Set(Object.keys(report.tests ?? {}));
+  const untestedTests = EXPECTED_TESTS.filter((k) => !doneKeys.has(k));
+
   return (
     <Shell
       title={`Relatório ${m.ntb_code || report.test_id.slice(0, 8)}`}
@@ -90,6 +96,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
             <Field label="Autopilot" value={m.autopilot} />
             <Field label="Ativação" value={m.windows_activation} />
             <Field label="Teclado retroiluminado" value={m.keyboard_backlight} />
+            <Field label="Teclado numérico" value={m.has_numeric_keypad == null ? '—' : (m.has_numeric_keypad ? 'Sim' : 'Não')} />
             <Field label="Etiqueta" value={report.asset_tag || '—'} />
           </dl>
         </div>
@@ -163,6 +170,58 @@ export default async function ReportDetailPage({ params }: PageProps) {
           )}
         </div>
       </section>
+
+      {report.stress ? (
+        <section className="mt-8">
+          <h2 className="mb-3 text-lg font-semibold">Benchmark e stress</h2>
+          <div className="card p-5">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              <StressStat label="Nota final" value={report.stress.final_score} />
+              <StressStat label="CPU Single" value={report.stress.cpu_single_thread} />
+              <StressStat label="CPU Multi" value={report.stress.cpu_multi_thread} />
+              <StressStat label="CPU eficiência" value={report.stress.cpu_efficiency} suffix="%" />
+              <StressStat label="GPU Graphics" value={report.stress.gpu_graphics} />
+              <StressStat label="GPU Compute" value={report.stress.gpu_compute} />
+              <StressStat label="GPU Bandwidth" value={report.stress.gpu_bandwidth} />
+              <StressStat label="Disco" value={report.stress.disk_score}
+                hint={report.stress.disk_read_mb_s != null
+                  ? `↓${Math.round(report.stress.disk_read_mb_s)} ↑${Math.round(report.stress.disk_write_mb_s ?? 0)} MB/s`
+                  : undefined} />
+              <StressStat label="Geekbench Single" value={report.stress.geekbench_single} />
+              <StressStat label="Geekbench Multi" value={report.stress.geekbench_multi} />
+            </div>
+            <div className="mt-4 flex flex-wrap gap-3 text-sm">
+              {report.stress.gpu_name ? (
+                <span className="rounded-lg bg-ink-50 px-3 py-1.5 dark:bg-ink-700/40">GPU: {report.stress.gpu_name}</span>
+              ) : null}
+              <span className="rounded-lg bg-ink-50 px-3 py-1.5 dark:bg-ink-700/40">
+                VRAM: {report.stress.vram_ok ? `OK (${report.stress.vram_allocated_mb ?? 0} MB)` : `corrompida (${report.stress.vram_mismatch_count ?? 0})`}
+              </span>
+              <span className="rounded-lg bg-ink-50 px-3 py-1.5 dark:bg-ink-700/40">
+                RAM: {report.stress.ram_ok ? `OK (${report.stress.ram_allocated_mb ?? 0} MB)` : `erros (${report.stress.ram_error_count ?? 0})`}
+              </span>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {untestedTests.length > 0 ? (
+        <section className="mt-8">
+          <h2 className="mb-3 text-lg font-semibold">Testes não realizados</h2>
+          <div className="card p-5">
+            <div className="flex flex-wrap gap-2">
+              {untestedTests.map((key) => (
+                <span key={key} className="rounded-lg bg-amber-50 px-3 py-1.5 text-sm text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">
+                  {labelTest(key)}
+                </span>
+              ))}
+            </div>
+            <p className="mt-3 text-xs text-ink-500 dark:text-ink-400">
+              Estes testes não foram executados neste checklist.
+            </p>
+          </div>
+        </section>
+      ) : null}
 
       {Object.keys(report.manual_checklist ?? {}).length > 0 ? (
         <section className="mt-8">
@@ -253,6 +312,19 @@ function Field({
       >
         {value}
       </dd>
+    </div>
+  );
+}
+
+function StressStat({ label, value, suffix, hint }: { label: string; value?: number | null; suffix?: string; hint?: string }) {
+  const show = value != null && value > 0;
+  return (
+    <div className="rounded-lg bg-ink-50 p-3 dark:bg-ink-700/40">
+      <div className="label">{label}</div>
+      <div className="mt-0.5 text-lg font-semibold text-ink-900 dark:text-white">
+        {show ? `${value}${suffix ?? ''}` : '—'}
+      </div>
+      {hint ? <div className="text-xs text-ink-500 dark:text-ink-400">{hint}</div> : null}
     </div>
   );
 }
