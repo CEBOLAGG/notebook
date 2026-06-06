@@ -113,26 +113,26 @@ export interface ApiPayload {
 }
 
 export interface StressMetrics {
-  final_score: number;
+  final_score?: number;
   // CPU
-  cpu_single_thread: number;
-  cpu_multi_thread: number;
-  cpu_efficiency: number;
-  cpu_threads: number;
+  cpu_single_thread?: number;
+  cpu_multi_thread?: number;
+  cpu_efficiency?: number;
+  cpu_threads?: number;
   // GPU
-  gpu_graphics: number;
-  gpu_compute: number;
-  gpu_bandwidth: number;
+  gpu_graphics?: number;
+  gpu_compute?: number;
+  gpu_bandwidth?: number;
   gpu_name?: string | null;
   gpu_feature_level?: string | null;
   // Disco
-  disk_score: number;
-  disk_read_mb_s: number;
-  disk_write_mb_s: number;
+  disk_score?: number;
+  disk_read_mb_s?: number;
+  disk_write_mb_s?: number;
   // VRAM
-  vram_ok: boolean;
-  vram_allocated_mb: number;
-  vram_mismatch_count: number;
+  vram_ok?: boolean;
+  vram_allocated_mb?: number;
+  vram_mismatch_count?: number;
   // RAM
   ram_ok?: boolean;
   ram_allocated_mb?: number;
@@ -142,6 +142,11 @@ export interface StressMetrics {
   geekbench_single?: number;
   geekbench_multi?: number;
   geekbench_version?: string | null;
+  // formato antigo (compatibilidade)
+  cpu_score?: number;
+  cpu_ops_per_sec?: number;
+  gpu_score?: number;
+  gpu_matched?: boolean;
 }
 
 export interface CommentDoc {
