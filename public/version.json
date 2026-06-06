@@ -1,14 +1,23 @@
 {
-  "version": "1.2.1",
+  "version": "1.2.2",
   "date": "2026-06-06",
-  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.2.1/NotebookCheck.exe",
-  "sha256": "3D5D7FDE7EBAE885956623DC0F30F65EBC818578F847E23AFB5A13C18F699246",
+  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.2.2/NotebookCheck.exe",
+  "sha256": "39566E84633326407D57F1162858CDE0BF570278D2F0693EAE7A3EDCAAB2C4BD",
   "changelog": [
-    "Correção do auto-updater: o download do app não era concluído (tempo limite muito curto para 113 MB)",
-    "Tempo de download agora é independente da verificação de versão",
-    "Mensagem de erro de atualização mais clara"
+    "Manifesto de versão agora servido pelo MongoDB (atualizações sem depender de redeploy do site)",
+    "Verificação de versão com fallback automático para o arquivo estático",
+    "Publicação de novas versões totalmente automatizada"
   ],
   "history": [
+    {
+      "version": "1.2.1",
+      "date": "2026-06-06",
+      "changelog": [
+        "Correção do auto-updater: o download do app não era concluído (tempo limite muito curto para 113 MB)",
+        "Tempo de download agora é independente da verificação de versão",
+        "Mensagem de erro de atualização mais clara"
+      ]
+    },
     {
       "version": "1.2.0",
       "date": "2026-06-06",
