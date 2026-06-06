@@ -33,6 +33,13 @@ export const storageSchema = z.object({
   capacity_gb: z.number(),
   type: z.string(),
   smart_status: z.string(),
+  model: z.string().nullable().optional(),
+  life_percent_remaining: z.number().nullable().optional(),
+  power_on_hours: z.number().nullable().optional(),
+  power_on_count: z.number().nullable().optional(),
+  data_written_tb: z.number().nullable().optional(),
+  data_read_tb: z.number().nullable().optional(),
+  temperature_c: z.number().nullable().optional(),
 });
 
 export const batterySchema = z.object({
@@ -88,7 +95,21 @@ export const apiPayloadSchema = z.object({
     vram_ok: z.boolean(),
     vram_allocated_mb: z.number(),
     vram_mismatch_count: z.number(),
+    ram_ok: z.boolean().optional(),
+    ram_allocated_mb: z.number().optional(),
+    ram_error_count: z.number().optional(),
+    ram_bandwidth_gbs: z.number().optional(),
+    geekbench_single: z.number().optional(),
+    geekbench_multi: z.number().optional(),
+    geekbench_version: z.string().nullable().optional(),
   }).nullable().optional(),
+  inspection_photos: z.array(z.object({
+    item_key: z.string(),
+    label: z.string(),
+    image_base64: z.string(),
+    note: z.string().nullable().optional(),
+    captured_at: z.string(),
+  })).optional().default([]),
 });
 
 export const commentSchema = z.object({

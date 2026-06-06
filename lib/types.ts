@@ -54,6 +54,13 @@ export interface StoragePayload {
   capacity_gb: number;
   type: string;
   smart_status: string;
+  model?: string | null;
+  life_percent_remaining?: number | null;
+  power_on_hours?: number | null;
+  power_on_count?: number | null;
+  data_written_tb?: number | null;
+  data_read_tb?: number | null;
+  temperature_c?: number | null;
 }
 
 export interface BatteryPayload {
@@ -75,6 +82,14 @@ export interface ManualChecklistPayload {
   notes: string;
 }
 
+export interface InspectionPhotoPayload {
+  item_key: string;
+  label: string;
+  image_base64: string;
+  note?: string | null;
+  captured_at: string;
+}
+
 export interface ApiPayload {
   test_id: string;
   report_type: 'full_checklist' | 'retest';
@@ -93,6 +108,7 @@ export interface ApiPayload {
   final_classification_override_reason?: string | null;
   checklist_mode?: string | null;
   stress?: StressMetrics | null;
+  inspection_photos?: InspectionPhotoPayload[];
 }
 
 export interface StressMetrics {
@@ -116,6 +132,15 @@ export interface StressMetrics {
   vram_ok: boolean;
   vram_allocated_mb: number;
   vram_mismatch_count: number;
+  // RAM
+  ram_ok?: boolean;
+  ram_allocated_mb?: number;
+  ram_error_count?: number;
+  ram_bandwidth_gbs?: number;
+  // Geekbench 6
+  geekbench_single?: number;
+  geekbench_multi?: number;
+  geekbench_version?: string | null;
 }
 
 export interface CommentDoc {

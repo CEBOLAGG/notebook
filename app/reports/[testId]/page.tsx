@@ -196,6 +196,30 @@ export default async function ReportDetailPage({ params }: PageProps) {
         </section>
       ) : null}
 
+      {(report.inspection_photos ?? []).length > 0 ? (
+        <section className="mt-8">
+          <h2 className="mb-3 text-lg font-semibold">Fotos da inspeção física</h2>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {(report.inspection_photos ?? []).map((p) => (
+              <figure key={p.item_key} className="card overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`data:image/jpeg;base64,${p.image_base64}`}
+                  alt={p.label}
+                  className="aspect-square w-full object-cover"
+                />
+                <figcaption className="p-3">
+                  <div className="text-sm font-semibold text-ink-900 dark:text-white">{p.label}</div>
+                  {p.note ? (
+                    <div className="mt-1 text-xs text-ink-500 dark:text-ink-400">{p.note}</div>
+                  ) : null}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       <section className="mt-8">
         <h2 className="mb-3 text-lg font-semibold">Comentários gerais</h2>
         <div className="card p-5">
