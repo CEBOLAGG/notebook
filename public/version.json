@@ -1,0 +1,11 @@
+{
+  "version": "1.0.0",
+  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.0.0/NotebookCheck.exe",
+  "sha256": "3FB3671C3A1832D4F200AF3E499173F7F33E248275677FD3A3D1B2292F4C4260",
+  "changelog": [
+    "Versão inicial com auto-atualização",
+    "Checklist técnico completo de notebooks",
+    "Benchmark de CPU, GPU, VRAM, RAM e disco",
+    "Inspeção física por QR code e fotos pelo celular"
+  ]
+}
