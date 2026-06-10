@@ -1,17 +1,25 @@
 {
-  "version": "1.3.0",
+  "version": "1.3.1",
   "date": "2026-06-10",
-  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.3.0/NotebookCheck.exe",
-  "sha256": "3FA816AAEFB71C6A0ACAC278DEBB9F7C2B337A71619BDEEF9D4C6B44419B8C3A",
+  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.3.1/NotebookCheck.exe",
+  "sha256": "D3298C7E2E2328AFCFD0E1CA390B1C10EDE3E627F577E42136A97FB0A52EA19A",
   "changelog": [
-    "Nota do benchmark refeita: agora é um índice normalizado onde 100 = máquina de referência (notebook médio 2023). Uma máquina 20% mais forte marca ~120, permitindo comparação real entre equipamentos — antes a nota era dominada pela GPU e mal distinguia CPU/disco.",
-    "RAM e VRAM agora são tratadas como teste de integridade (passa/falha) e não inflam mais a nota de desempenho.",
-    "Inspeção física no celular: depois de tirar cada foto, o técnico marca se o item está OK ou Com problema e adiciona um comentário.",
-    "Painel: as duas seções de inspeção física viraram uma só, com foto + status + comentário juntos.",
-    "Painel: modo de edição do relatório refeito (com abas) e agora permite editar o status e o comentário de cada foto da inspeção.",
-    "Painel: nova página \"Novidades\" com o histórico completo de versões."
+    "Etapa \"Desempenho e stress\" mais clara nos modos Básico e Padrão: agora mostra um aviso explicando que o benchmark/stress só roda no modo Detalhado e que a humanização está nos modos Padrão e Detalhado (antes a tela ficava vazia, só com o título).",
+    "Painel: o modo de edição do relatório agora é uma página dedicada — ao salvar, volta automaticamente para o relatório."
   ],
   "history": [
+    {
+      "version": "1.3.0",
+      "date": "2026-06-10",
+      "changelog": [
+        "Nota do benchmark refeita: agora é um índice normalizado onde 100 = máquina de referência (notebook médio 2023). Uma máquina 20% mais forte marca ~120, permitindo comparação real entre equipamentos — antes a nota era dominada pela GPU e mal distinguia CPU/disco.",
+        "RAM e VRAM agora são tratadas como teste de integridade (passa/falha) e não inflam mais a nota de desempenho.",
+        "Inspeção física no celular: depois de tirar cada foto, o técnico marca se o item está OK ou Com problema e adiciona um comentário.",
+        "Painel: as duas seções de inspeção física viraram uma só, com foto + status + comentário juntos.",
+        "Painel: modo de edição do relatório refeito (com abas) e agora permite editar o status e o comentário de cada foto da inspeção.",
+        "Painel: nova página \"Novidades\" com o histórico completo de versões."
+      ]
+    },
     {
       "version": "1.2.8",
       "date": "2026-06-09",

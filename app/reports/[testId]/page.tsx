@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import { Shell } from '@/components/Shell';
 import { Badge, ClassificationBadge, StatusBadge } from '@/components/StatusBadge';
 import { CommentForm } from '@/components/CommentForm';
-import { ReportEditor } from '@/components/ReportEditor';
 import { reportsRepo } from '@/lib/repository';
 import { INSPECTION_ITEMS } from '@/lib/inspection-items';
 import {
@@ -52,13 +51,16 @@ export default async function ReportDetailPage({ params }: PageProps) {
       title={`Relatório ${m.ntb_code || report.test_id.slice(0, 8)}`}
       subtitle={`${[m.manufacturer, m.model].filter(Boolean).join(' ') || 'Equipamento'} • ${formatDate(report.tested_at)}`}
       actions={
-        <Link href="/reports" className="btn-outline">
-          Voltar
-        </Link>
+        <>
+          <Link href={`/reports/${encodeURIComponent(report.test_id)}/edit`} className="btn-primary">
+            ✏️ Editar relatório
+          </Link>
+          <Link href="/reports" className="btn-outline">
+            Voltar
+          </Link>
+        </>
       }
     >
-      <ReportEditor report={report} />
-
       <section className="grid gap-4 lg:grid-cols-[2fr_1fr]">
         <div className="card p-6">
           <div className="mb-4 flex items-center justify-between">

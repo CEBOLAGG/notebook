@@ -24,18 +24,16 @@ interface InspectionEdit {
 }
 
 /**
- * Editor completo do relatório para os técnicos manipularem o estoque no site.
- * Organizado em abas: identificação, testes, inspeção manual e inspeção física
- * (foto + status + comentário). Os campos gerais e os testes/manual são salvos
- * via PATCH /api/reports/:id; a avaliação das fotos via PATCH .../inspection.
+ * Formulário de edição do relatório em PÁGINA DEDICADA (/reports/:id/edit).
+ * Ao salvar, volta para a página normal do relatório. Organizado em abas:
+ * identificação, testes, inspeção manual e fotos (status + comentário).
  */
-export function ReportEditor({ report }: { report: ReportDoc }) {
+export function ReportEditForm({ report }: { report: ReportDoc }) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const backUrl = `/reports/${encodeURIComponent(report.test_id)}`;
   const [section, setSection] = useState<Section>('ident');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [ok, setOk] = useState(false);
 
   const m = report.machine;
   const [ntb, setNtb] = useState(m.ntb_code ?? '');
@@ -78,7 +76,6 @@ export function ReportEditor({ report }: { report: ReportDoc }) {
   async function save() {
     setBusy(true);
     setError(null);
-    setOk(false);
     try {
       const patch: Record<string, unknown> = {
         'machine.ntb_code': ntb,
@@ -119,7 +116,6 @@ export function ReportEditor({ report }: { report: ReportDoc }) {
         throw new Error(body?.message || body?.error || `HTTP ${r.status}`);
       }
 
-      // Avaliação das fotos (status + nota) via endpoint dedicado (sem imagens).
       if (inspection.length > 0) {
         const evals = inspection.map((i) => ({
           item_key: i.item_key,
@@ -137,31 +133,17 @@ export function ReportEditor({ report }: { report: ReportDoc }) {
         }
       }
 
-      setOk(true);
+      // Volta para a página normal do relatório, já atualizada.
+      router.push(backUrl);
       router.refresh();
-      setTimeout(() => setOpen(false), 800);
     } catch (err) {
       setError((err as Error).message);
-    } finally {
       setBusy(false);
     }
   }
 
-  if (!open) {
-    return (
-      <button onClick={() => setOpen(true)} className="btn-primary">
-        ✏️ Editar relatório
-      </button>
-    );
-  }
-
   return (
-    <div className="card mt-4 p-6">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-ink-900 dark:text-white">Editar relatório</h2>
-        <button onClick={() => setOpen(false)} className="btn-ghost">Fechar</button>
-      </div>
-
+    <div className="card p-6">
       {/* Abas */}
       <div className="mb-5 flex flex-wrap gap-1 border-b border-ink-200 dark:border-ink-700">
         {tabs.map((t) => (
@@ -265,13 +247,14 @@ export function ReportEditor({ report }: { report: ReportDoc }) {
       ) : null}
 
       {error ? <div className="mt-4 text-sm text-bad">{error}</div> : null}
-      {ok ? <div className="mt-4 text-sm text-ok">Salvo com sucesso ✓</div> : null}
 
       <div className="mt-6 flex gap-2 border-t border-ink-100 pt-4 dark:border-ink-700">
         <button onClick={save} disabled={busy} className="btn-primary">
-          {busy ? 'Salvando…' : 'Salvar alterações'}
+          {busy ? 'Salvando…' : 'Salvar e voltar ao relatório'}
         </button>
-        <button onClick={() => setOpen(false)} className="btn-ghost">Cancelar</button>
+        <button onClick={() => router.push(backUrl)} disabled={busy} className="btn-ghost">
+          Cancelar
+        </button>
       </div>
     </div>
   );
