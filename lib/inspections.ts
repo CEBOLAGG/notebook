@@ -7,11 +7,16 @@ import { INSPECTION_ITEMS } from './inspection-items';
  * ficam aqui no MongoDB vinculadas ao serial da máquina. Quando o relatório
  * final chega (com o mesmo slug), as fotos são mescladas no relatório.
  */
+/** Avaliação do técnico para o item: aprovado, com problema, ou ainda sem avaliar. */
+export type InspectionStatus = 'ok' | 'problema' | null;
+
 export interface InspectionPhotoDoc {
   item_key: string;
   label: string;
   image_base64: string;
   note?: string | null;
+  /** Avaliação do técnico (OK ou Com problema), definida no celular após a foto. */
+  status?: InspectionStatus;
   captured_at: string;
 }
 
@@ -85,29 +90,64 @@ export const inspectionsRepo = {
     return col.findOne({ slug });
   },
 
-  /** Estado para a página mobile: itens do catálogo + quais já têm foto. */
+  /**
+   * Atualiza apenas a avaliação (status + nota) de um item que já tem foto,
+   * sem reenviar a imagem. Usado quando o técnico ajusta a avaliação no celular.
+   */
+  async updatePhotoMeta(
+    slug: string,
+    itemKey: string,
+    meta: { status?: InspectionStatus; note?: string | null },
+  ): Promise<InspectionDoc | null> {
+    const db = await getDb();
+    const col = db.collection<InspectionDoc>(COLLECTION);
+    const now = new Date().toISOString();
+    const set: Record<string, unknown> = { 'photos.$.updated_at': now, updated_at: now };
+    if (meta.status !== undefined) set['photos.$.status'] = meta.status;
+    if (meta.note !== undefined) set['photos.$.note'] = meta.note;
+    const r = await col.updateOne(
+      { slug, 'photos.item_key': itemKey },
+      { $set: set },
+    );
+    if (r.matchedCount === 0) return null;
+    return col.findOne({ slug });
+  },
+
+  /** Estado para a página mobile: itens do catálogo + foto/status/nota de cada. */
   async state(slug: string): Promise<{
     found: boolean;
     serial: string;
     machine: string;
     total: number;
     done: number;
-    items: { key: string; label: string; instruction: string; done: boolean }[];
+    items: {
+      key: string;
+      label: string;
+      instruction: string;
+      done: boolean;
+      status: InspectionStatus;
+      note: string | null;
+    }[];
   }> {
     const doc = await this.get(slug);
-    const doneKeys = new Set((doc?.photos ?? []).map((p) => p.item_key));
+    const byKey = new Map((doc?.photos ?? []).map((p) => [p.item_key, p]));
     return {
       found: !!doc,
       serial: doc?.serial ?? '',
       machine: doc?.machine ?? '',
       total: INSPECTION_ITEMS.length,
-      done: doneKeys.size,
-      items: INSPECTION_ITEMS.map((i) => ({
-        key: i.key,
-        label: i.label,
-        instruction: i.instruction,
-        done: doneKeys.has(i.key),
-      })),
+      done: byKey.size,
+      items: INSPECTION_ITEMS.map((i) => {
+        const p = byKey.get(i.key);
+        return {
+          key: i.key,
+          label: i.label,
+          instruction: i.instruction,
+          done: !!p,
+          status: p?.status ?? null,
+          note: p?.note ?? null,
+        };
+      }),
     };
   },
 };

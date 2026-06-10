@@ -41,6 +41,7 @@ export const reportsRepo = {
             label: p.label,
             image_base64: p.image_base64,
             note: p.note ?? null,
+            status: p.status ?? null,
             captured_at: p.captured_at,
           }));
         }
@@ -268,6 +269,35 @@ export const reportsRepo = {
 
     const r = await col.updateOne({ test_id: testId }, { $set: set });
     if (r.matchedCount === 0) return null;
+    return col.findOne({ test_id: testId });
+  },
+
+  /**
+   * Atualiza apenas a avaliação (status + nota) das fotos de inspeção, por
+   * item_key, sem reenviar as imagens (base64). Usado pelo modo de edição.
+   */
+  async updateInspectionEval(
+    testId: string,
+    evals: { item_key: string; status?: string | null; note?: string | null }[],
+  ): Promise<ReportDoc | null> {
+    const db = await getDb();
+    const col = db.collection<ReportDoc>(COLLECTION);
+    const ops = evals.map((e) => {
+      const set: Record<string, unknown> = {};
+      const status = e.status === 'ok' || e.status === 'problema' ? e.status : null;
+      set['inspection_photos.$[el].status'] = status;
+      if (e.note !== undefined) set['inspection_photos.$[el].note'] = e.note ?? null;
+      return {
+        updateOne: {
+          filter: { test_id: testId },
+          update: { $set: set },
+          arrayFilters: [{ 'el.item_key': e.item_key }],
+        },
+      };
+    });
+    if (ops.length === 0) return col.findOne({ test_id: testId });
+    await col.bulkWrite(ops as never[]);
+    await col.updateOne({ test_id: testId }, { $set: { edited_at: new Date().toISOString() } });
     return col.findOne({ test_id: testId });
   },
 

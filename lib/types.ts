@@ -83,11 +83,15 @@ export interface ManualChecklistPayload {
   notes: string;
 }
 
+export type InspectionStatus = 'ok' | 'problema' | null;
+
 export interface InspectionPhotoPayload {
   item_key: string;
   label: string;
   image_base64: string;
   note?: string | null;
+  /** Avaliação do técnico: 'ok', 'problema' ou null (não avaliado). */
+  status?: InspectionStatus;
   captured_at: string;
 }
 

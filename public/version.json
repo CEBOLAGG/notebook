@@ -1,16 +1,47 @@
 {
-  "version": "1.2.6",
-  "date": "2026-06-06",
-  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.2.6/NotebookCheck.exe",
-  "sha256": "C9DA7EED392C97F05EB8B26242F28659E3B72D087F03DDC42041D6772388F621",
+  "version": "1.3.0",
+  "date": "2026-06-10",
+  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.3.0/NotebookCheck.exe",
+  "sha256": "3FA816AAEFB71C6A0ACAC278DEBB9F7C2B337A71619BDEEF9D4C6B44419B8C3A",
   "changelog": [
-    "Novo botão \"Rodar todos os testes\": executa CPU, GPU, disco, VRAM e RAM em sequência",
-    "Nota final do benchmark de volta, consolidando todos os testes",
-    "Reenvio do relatório agora atualiza o existente em vez de duplicar (preserva comentários e edições do site)",
-    "Geekbench removido do painel web",
-    "Inspeção física no site: itens sem foto aparecem como \"Não realizado\" em vez de OK"
+    "Nota do benchmark refeita: agora é um índice normalizado onde 100 = máquina de referência (notebook médio 2023). Uma máquina 20% mais forte marca ~120, permitindo comparação real entre equipamentos — antes a nota era dominada pela GPU e mal distinguia CPU/disco.",
+    "RAM e VRAM agora são tratadas como teste de integridade (passa/falha) e não inflam mais a nota de desempenho.",
+    "Inspeção física no celular: depois de tirar cada foto, o técnico marca se o item está OK ou Com problema e adiciona um comentário.",
+    "Painel: as duas seções de inspeção física viraram uma só, com foto + status + comentário juntos.",
+    "Painel: modo de edição do relatório refeito (com abas) e agora permite editar o status e o comentário de cada foto da inspeção.",
+    "Painel: nova página \"Novidades\" com o histórico completo de versões."
   ],
   "history": [
+    {
+      "version": "1.2.8",
+      "date": "2026-06-09",
+      "changelog": [
+        "Detecção de Windows Autopilot removida temporariamente: a verificação local só enxerga aparelhos com o perfil já aplicado e não consegue confirmar registro em outro tenant, então foi retirada para não passar informação parcial. Volta quando puder ser feita de forma confiável."
+      ]
+    },
+    {
+      "version": "1.2.7",
+      "date": "2026-06-09",
+      "changelog": [
+        "Bateria com visão completa: barra de carga atual, capacidade máxima em %, saúde, desgaste, nome, marca, química, voltagem e taxa de carga/descarga (lidos da API nativa do Windows, como o BatteryInfoView)",
+        "Bateria: notebooks com limite de carga (modo conservação) não aparecem mais como \"Indisponível\"",
+        "Bateria: falha de leitura do Windows não é mais confundida com \"sem bateria\", e notebooks com duas baterias passam a somar capacidade e ciclos corretamente",
+        "Detecção real do Windows Autopilot: lê o perfil atribuído ao aparelho no registro em vez de sempre indicar \"não\"",
+        "Saúde do disco: um disco marcado como defeituoso pelo Windows não aparece mais como \"SMART OK\"",
+        "Disco sem leitura de SMART deixa de reprovar a máquina indevidamente"
+      ]
+    },
+    {
+      "version": "1.2.6",
+      "date": "2026-06-06",
+      "changelog": [
+        "Novo botão \"Rodar todos os testes\": executa CPU, GPU, disco, VRAM e RAM em sequência",
+        "Nota final do benchmark de volta, consolidando todos os testes",
+        "Reenvio do relatório agora atualiza o existente em vez de duplicar (preserva comentários e edições do site)",
+        "Geekbench removido do painel web",
+        "Inspeção física no site: itens sem foto aparecem como \"Não realizado\" em vez de OK"
+      ]
+    },
     {
       "version": "1.2.5",
       "date": "2026-06-06",

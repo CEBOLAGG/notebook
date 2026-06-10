@@ -2,11 +2,15 @@
 
 import { use, useCallback, useEffect, useRef, useState } from 'react';
 
+type Status = 'ok' | 'problema' | null;
+
 interface ItemState {
   key: string;
   label: string;
   instruction: string;
   done: boolean;
+  status: Status;
+  note: string | null;
 }
 
 interface StateResp {
@@ -31,6 +35,8 @@ export default function InspecaoPage({
   const [state, setState] = useState<StateResp | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Rascunho local de avaliação por item (status + nota) ainda não enviado.
+  const [draft, setDraft] = useState<Record<string, { status: Status; note: string }>>({});
   const fileInputs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const load = useCallback(async () => {
@@ -39,9 +45,19 @@ export default function InspecaoPage({
       if (sp.serial) qs.set('serial', sp.serial);
       if (sp.machine) qs.set('machine', sp.machine);
       const r = await fetch(`/api/inspecao/${slug}?${qs.toString()}`, { cache: 'no-store' });
-      const data = await r.json();
+      const data: StateResp = await r.json();
       setState(data);
       setError(null);
+      // Semeia o rascunho com o que já está salvo (sem sobrescrever edição em curso).
+      setDraft((prev) => {
+        const next = { ...prev };
+        for (const it of data.items ?? []) {
+          if (next[it.key] === undefined && it.done) {
+            next[it.key] = { status: it.status, note: it.note ?? '' };
+          }
+        }
+        return next;
+      });
     } catch {
       setError('Sem conexão. Verifique a internet do celular.');
     }
@@ -49,19 +65,21 @@ export default function InspecaoPage({
 
   useEffect(() => {
     load();
-    const t = setInterval(load, 10000);
+    const t = setInterval(load, 15000);
     return () => clearInterval(t);
   }, [load]);
 
-  async function upload(key: string, file: File | undefined) {
+  // Envia a foto (e a avaliação atual, se já escolhida).
+  async function uploadPhoto(key: string, file: File | undefined) {
     if (!file) return;
     setBusy(key);
     try {
       const dataUrl = await resizeToJpeg(file, 1280, 0.7);
+      const d = draft[key] ?? { status: null, note: '' };
       const r = await fetch(`/api/inspecao/${slug}/upload`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ item_key: key, image: dataUrl }),
+        body: JSON.stringify({ item_key: key, image: dataUrl, status: d.status, note: d.note }),
       });
       if (!r.ok) throw new Error('falha no upload');
       await load();
@@ -70,6 +88,32 @@ export default function InspecaoPage({
     } finally {
       setBusy(null);
     }
+  }
+
+  // Salva só a avaliação (status + nota) de um item que já tem foto.
+  async function saveEvaluation(key: string) {
+    const d = draft[key] ?? { status: null, note: '' };
+    setBusy(key);
+    try {
+      const r = await fetch(`/api/inspecao/${slug}/upload`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ item_key: key, status: d.status, note: d.note }),
+      });
+      if (!r.ok) throw new Error('falha ao salvar');
+      await load();
+    } catch {
+      setError('Não foi possível salvar a avaliação. Tente de novo.');
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  function setDraftStatus(key: string, status: Status) {
+    setDraft((p) => ({ ...p, [key]: { status, note: p[key]?.note ?? '' } }));
+  }
+  function setDraftNote(key: string, note: string) {
+    setDraft((p) => ({ ...p, [key]: { status: p[key]?.status ?? null, note } }));
   }
 
   if (!state) {
@@ -82,6 +126,8 @@ export default function InspecaoPage({
     );
   }
 
+  const evaluated = state.items.filter((i) => i.done && i.status).length;
+
   return (
     <main style={S.page}>
       <header style={S.header}>
@@ -89,50 +135,109 @@ export default function InspecaoPage({
         <div style={S.sub}>
           {(state.machine || 'Equipamento')} • Serial {state.serial || '—'}
         </div>
-        <div style={S.prog}>{state.done} de {state.total} fotos</div>
+        <div style={S.prog}>
+          {state.done} de {state.total} fotos • {evaluated} avaliadas
+        </div>
         {error ? <div style={{ color: '#ff6b6b', fontSize: 12, marginTop: 6 }}>{error}</div> : null}
       </header>
 
       <div style={S.list}>
-        {state.items.map((it) => (
-          <div key={it.key} style={{ ...S.card, ...(it.done ? S.cardDone : {}) }}>
-            <div style={S.row}>
-              <div style={{ ...S.ck, ...(it.done ? S.ckOn : {}) }}>{it.done ? '✓' : ''}</div>
-              <div style={S.lbl}>{it.label}</div>
-            </div>
-            <div style={S.ins}>{it.instruction}</div>
-            {it.done ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={`/api/inspecao/${slug}/photo/${it.key}?t=${Date.now()}`}
-                alt={it.label}
-                style={S.thumb}
+        {state.items.map((it) => {
+          const d = draft[it.key] ?? { status: it.status, note: it.note ?? '' };
+          const isBusy = busy === it.key;
+          // Há mudança de avaliação ainda não salva?
+          const dirty = it.done && (d.status !== it.status || (d.note ?? '') !== (it.note ?? ''));
+          return (
+            <div key={it.key} style={{ ...S.card, ...(it.done ? cardTone(it.status) : {}) }}>
+              <div style={S.row}>
+                <div style={{ ...S.ck, ...(it.done ? S.ckOn : {}) }}>{it.done ? '✓' : ''}</div>
+                <div style={S.lbl}>{it.label}</div>
+                {it.done && it.status ? (
+                  <span style={{ ...S.tag, ...(it.status === 'ok' ? S.tagOk : S.tagBad) }}>
+                    {it.status === 'ok' ? 'OK' : 'Problema'}
+                  </span>
+                ) : null}
+              </div>
+              <div style={S.ins}>{it.instruction}</div>
+
+              {it.done ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={`/api/inspecao/${slug}/photo/${it.key}?t=${Date.now()}`}
+                  alt={it.label}
+                  style={S.thumb}
+                />
+              ) : null}
+
+              <input
+                ref={(el) => { fileInputs.current[it.key] = el; }}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                style={{ display: 'none' }}
+                onChange={(e) => uploadPhoto(it.key, e.target.files?.[0])}
               />
-            ) : null}
-            <input
-              ref={(el) => { fileInputs.current[it.key] = el; }}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              style={{ display: 'none' }}
-              onChange={(e) => upload(it.key, e.target.files?.[0])}
-            />
-            <button
-              style={{ ...S.btn, ...(it.done ? S.btnRe : {}) }}
-              disabled={busy === it.key}
-              onClick={() => fileInputs.current[it.key]?.click()}
-            >
-              {busy === it.key ? 'Enviando…' : it.done ? 'Tirar outra foto' : '📷 Tirar foto'}
-            </button>
-          </div>
-        ))}
+
+              <button
+                style={{ ...S.btn, ...(it.done ? S.btnRe : {}) }}
+                disabled={isBusy}
+                onClick={() => fileInputs.current[it.key]?.click()}
+              >
+                {isBusy ? 'Enviando…' : it.done ? 'Tirar outra foto' : '📷 Tirar foto'}
+              </button>
+
+              {/* Avaliação aparece depois da foto. */}
+              {it.done ? (
+                <div style={S.eval}>
+                  <div style={S.evalTitle}>Este item está OK ou tem problema?</div>
+                  <div style={S.statusRow}>
+                    <button
+                      onClick={() => setDraftStatus(it.key, 'ok')}
+                      style={{ ...S.statusBtn, ...(d.status === 'ok' ? S.statusOkOn : {}) }}
+                    >
+                      ✓ OK
+                    </button>
+                    <button
+                      onClick={() => setDraftStatus(it.key, 'problema')}
+                      style={{ ...S.statusBtn, ...(d.status === 'problema' ? S.statusBadOn : {}) }}
+                    >
+                      ⚠ Com problema
+                    </button>
+                  </div>
+                  <textarea
+                    value={d.note}
+                    onChange={(e) => setDraftNote(it.key, e.target.value)}
+                    placeholder={d.status === 'problema'
+                      ? 'Descreva o problema (obrigatório)'
+                      : 'Comentário (opcional)'}
+                    rows={2}
+                    style={S.note}
+                  />
+                  <button
+                    onClick={() => saveEvaluation(it.key)}
+                    disabled={isBusy || !dirty || (d.status === 'problema' && !d.note.trim())}
+                    style={{ ...S.saveBtn, ...((!dirty || (d.status === 'problema' && !d.note.trim())) ? S.saveOff : {}) }}
+                  >
+                    {isBusy ? 'Salvando…' : dirty ? 'Salvar avaliação' : 'Avaliação salva ✓'}
+                  </button>
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
       </div>
 
       <footer style={S.footer}>
-        As fotos são salvas no relatório deste equipamento (serial {state.serial || '—'}).
+        As fotos e avaliações são salvas no relatório deste equipamento (serial {state.serial || '—'}).
       </footer>
     </main>
   );
+}
+
+function cardTone(status: Status): React.CSSProperties {
+  if (status === 'problema') return { borderColor: '#b3502f' };
+  if (status === 'ok') return { borderColor: '#2f7d4f' };
+  return { borderColor: '#7d6a2f' }; // foto sem avaliação ainda
 }
 
 /** Redimensiona a imagem no celular antes de enviar (economiza dados/memória). */
@@ -174,16 +279,30 @@ const S: Record<string, React.CSSProperties> = {
   prog: { fontSize: 13, color: '#6ea8fe', marginTop: 6, fontWeight: 600 },
   list: { padding: 14, display: 'flex', flexDirection: 'column', gap: 14 },
   card: { background: '#161a21', border: '1px solid #262c38', borderRadius: 14, padding: 14 },
-  cardDone: { borderColor: '#2f7d4f' },
   row: { display: 'flex', alignItems: 'center', gap: 10 },
   ck: { width: 26, height: 26, borderRadius: '50%', border: '2px solid #3a4150', flex: '0 0 auto',
         display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, color: '#0f1115' },
   ckOn: { background: '#34c759', borderColor: '#34c759' },
-  lbl: { fontSize: 15, fontWeight: 600 },
+  lbl: { fontSize: 15, fontWeight: 600, flex: 1 },
+  tag: { fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 999 },
+  tagOk: { background: 'rgba(52,199,89,0.18)', color: '#5bd47a' },
+  tagBad: { background: 'rgba(255,107,107,0.18)', color: '#ff8a8a' },
   ins: { fontSize: 12.5, color: '#9aa3b2', margin: '8px 0 12px', lineHeight: 1.45 },
   thumb: { width: '100%', borderRadius: 10, margin: '8px 0', display: 'block' },
   btn: { width: '100%', border: 0, borderRadius: 10, padding: 13, fontSize: 15, fontWeight: 600,
          background: '#3b82f6', color: '#fff', cursor: 'pointer' },
   btnRe: { background: '#262c38', color: '#cdd4e0' },
+  eval: { marginTop: 12, paddingTop: 12, borderTop: '1px solid #262c38' },
+  evalTitle: { fontSize: 13, fontWeight: 600, marginBottom: 8 },
+  statusRow: { display: 'flex', gap: 8, marginBottom: 8 },
+  statusBtn: { flex: 1, border: '1px solid #3a4150', borderRadius: 10, padding: 11, fontSize: 14,
+               fontWeight: 600, background: '#0f1115', color: '#cdd4e0', cursor: 'pointer' },
+  statusOkOn: { background: '#1f7a44', borderColor: '#34c759', color: '#fff' },
+  statusBadOn: { background: '#9b3b22', borderColor: '#ff6b6b', color: '#fff' },
+  note: { width: '100%', boxSizing: 'border-box', background: '#0f1115', color: '#e7eaf0',
+          border: '1px solid #3a4150', borderRadius: 10, padding: 10, fontSize: 14, resize: 'vertical' },
+  saveBtn: { width: '100%', marginTop: 8, border: 0, borderRadius: 10, padding: 12, fontSize: 14,
+             fontWeight: 600, background: '#3b82f6', color: '#fff', cursor: 'pointer' },
+  saveOff: { background: '#262c38', color: '#7b8494', cursor: 'default' },
   footer: { textAlign: 'center', fontSize: 11, color: '#6b7384', padding: 20 },
 };

@@ -228,79 +228,68 @@ export default async function ReportDetailPage({ params }: PageProps) {
       ) : null}
 
       {(() => {
-        // Inspeção física é baseada em FOTOS (fluxo do QR no celular). Cada item
-        // esperado do catálogo aparece como "OK" se a foto chegou, ou
-        // "Não realizado" se o técnico não enviou. Não usamos mais o status
-        // default "OK" do manual_checklist (que aparecia OK mesmo sem foto).
+        // Inspeção física UNIFICADA: uma única seção com a foto, a avaliação do
+        // técnico (OK / Com problema, definida no celular) e o comentário. Itens
+        // do catálogo sem foto aparecem como "Não realizado". O status e o
+        // comentário são editáveis no modo de edição do relatório.
         const photos = report.inspection_photos ?? [];
         const photoByKey = new Map(photos.map((p) => [p.item_key, p]));
-        // Só mostra a seção se houve intenção de inspeção (algum item esperado).
         if (INSPECTION_ITEMS.length === 0) return null;
         return (
           <section className="mt-8">
             <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">Inspeção física</h2>
-            <div className="card divide-y divide-ink-100 dark:divide-ink-700">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {INSPECTION_ITEMS.map((def) => {
-                const has = photoByKey.has(def.key);
+                const p = photoByKey.get(def.key);
+                const status = p?.status ?? null;
+                const extraComments = commentsByKey.get(def.key) ?? [];
                 return (
-                  <article key={def.key} className="p-5">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-semibold text-ink-900 dark:text-white">
-                            {def.label}
-                          </h3>
-                          {has ? (
-                            <StatusBadge status="OK" />
-                          ) : (
-                            <Badge text="Não realizado" tone="mute" />
-                          )}
-                        </div>
-                        {!has ? (
-                          <p className="mt-1 text-xs text-ink-500 dark:text-ink-400">
-                            Foto não enviada pelo técnico.
-                          </p>
-                        ) : null}
+                  <figure key={def.key} className="card flex flex-col overflow-hidden">
+                    {p ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={`data:image/jpeg;base64,${p.image_base64}`}
+                        alt={def.label}
+                        className="aspect-video w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex aspect-video w-full items-center justify-center bg-ink-50 text-xs text-ink-400 dark:bg-ink-700/40">
+                        Sem foto
                       </div>
-                    </div>
-                    <CommentList comments={commentsByKey.get(def.key) ?? []} />
-                    <CommentForm
-                      testId={report.test_id}
-                      testKey={def.key}
-                      compact
-                      placeholder="Comente este item"
-                    />
-                  </article>
+                    )}
+                    <figcaption className="flex flex-1 flex-col gap-2 p-4">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-sm font-semibold text-ink-900 dark:text-white">
+                          {def.label}
+                        </span>
+                        {!p ? (
+                          <Badge text="Não realizado" tone="mute" />
+                        ) : status === 'problema' ? (
+                          <Badge text="Com problema" tone="bad" />
+                        ) : status === 'ok' ? (
+                          <Badge text="OK" tone="ok" />
+                        ) : (
+                          <Badge text="Sem avaliação" tone="warn" />
+                        )}
+                      </div>
+                      {p?.note ? (
+                        <p className="text-sm text-ink-700 dark:text-ink-200">{p.note}</p>
+                      ) : !p ? (
+                        <p className="text-xs text-ink-500 dark:text-ink-400">
+                          Foto não enviada pelo técnico.
+                        </p>
+                      ) : null}
+                      {extraComments.length > 0 ? (
+                        <CommentList comments={extraComments} />
+                      ) : null}
+                    </figcaption>
+                  </figure>
                 );
               })}
             </div>
           </section>
         );
       })()}
-
-      {(report.inspection_photos ?? []).length > 0 ? (
-        <section className="mt-8">
-          <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">Fotos da inspeção física</h2>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {(report.inspection_photos ?? []).map((p) => (
-              <figure key={p.item_key} className="card overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`data:image/jpeg;base64,${p.image_base64}`}
-                  alt={p.label}
-                  className="aspect-square w-full object-cover"
-                />
-                <figcaption className="p-3">
-                  <div className="text-sm font-semibold text-ink-900 dark:text-white">{p.label}</div>
-                  {p.note ? (
-                    <div className="mt-1 text-xs text-ink-500 dark:text-ink-400">{p.note}</div>
-                  ) : null}
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </section>
-      ) : null}
 
       <section className="mt-8">
         <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">Comentários gerais</h2>
