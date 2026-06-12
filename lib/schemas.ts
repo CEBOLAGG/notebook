@@ -42,13 +42,15 @@ export const storageSchema = z.object({
   temperature_c: z.number().nullable().optional(),
 });
 
+// passthrough: o app manda campos ricos (nome, fabricante, química, voltagem,
+// saúde, taxa de carga...) — sem isso o zod PODAVA tudo que não estava listado.
 export const batterySchema = z.object({
   design_capacity_mwh: z.number().nullable().optional(),
   current_capacity_mwh: z.number().nullable().optional(),
   cycle_count: z.number().nullable().optional(),
   charging_status: z.string(),
   wear_percent: z.number().nullable().optional(),
-});
+}).passthrough();
 
 export const testEntrySchema = z.object({
   status: z.string(),
@@ -115,8 +117,10 @@ export const apiPayloadSchema = z.object({
     label: z.string(),
     image_base64: z.string(),
     note: z.string().nullable().optional(),
+    // 'ok' | 'problema' | null — valores fora disso viram null (catch).
+    status: z.enum(['ok', 'problema']).nullable().catch(null).optional(),
     captured_at: z.string(),
-  })).optional().default([]),
+  }).passthrough()).optional().default([]),
   inspection_slug: z.string().nullable().optional(),
 });
 

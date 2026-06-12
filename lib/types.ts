@@ -46,6 +46,14 @@ export interface MachinePayload {
   network_adapters_wifi?: number;
   network_adapters_ethernet?: number;
   bluetooth_version?: string | null;
+  /** Senhas de BIOS lidas via WMI do fabricante (HP/Dell/Lenovo). */
+  bios_setup_password?: string | null;
+  bios_power_on_password?: string | null;
+  bios_hdd_password?: string | null;
+  /** Absolute / Computrace (persistência de firmware). */
+  computrace_module?: string | null;
+  computrace_agent?: string | null;
+  computrace_version?: string | null;
   ntb_code: string;
   location: string;
   keyboard_backlight: string;

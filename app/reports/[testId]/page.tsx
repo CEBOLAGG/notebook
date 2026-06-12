@@ -110,7 +110,9 @@ export default async function ReportDetailPage({ params }: PageProps) {
             <Field label="Secure Boot" value={m.secure_boot} />
             <Field label="Autopilot" value={m.autopilot_detail ? `${m.autopilot} — ${m.autopilot_detail}` : m.autopilot} />
             <Field label="Ativação" value={m.windows_activation} />
-            <Field label="Teclado retroiluminado" value={m.keyboard_backlight} />
+            <Field label="Senha de BIOS" value={formatBiosPasswords(m)} />
+            <Field label="Computrace" value={formatComputrace(m)} />
+            <Field label="Teclado retroiluminado" value={formatSimNao(m.keyboard_backlight)} />
             <Field label="Teclado numérico" value={m.has_numeric_keypad == null ? '—' : (m.has_numeric_keypad ? 'Sim' : 'Não')} />
             <Field label="Etiqueta" value={report.asset_tag || '—'} />
           </dl>
@@ -324,6 +326,35 @@ export default async function ReportDetailPage({ params }: PageProps) {
       </section>
     </Shell>
   );
+}
+
+/** Normaliza "sim"/"nao"/"indisponivel" (payload) para exibição capitalizada. */
+function formatSimNao(v?: string | null): string {
+  switch ((v ?? '').toLowerCase()) {
+    case 'sim': return 'Sim';
+    case 'nao': case 'não': return 'Não';
+    case 'indisponivel': case 'indisponível': case '': return 'Indisponível';
+    default: return v!.charAt(0).toUpperCase() + v!.slice(1);
+  }
+}
+
+/** Resume o estado das senhas de BIOS (Setup / Power-On / HDD). */
+function formatBiosPasswords(m: ReportDoc['machine']): string {
+  const parts: string[] = [];
+  if (m.bios_setup_password) parts.push(`Setup: ${m.bios_setup_password}`);
+  if (m.bios_power_on_password) parts.push(`Power-On: ${m.bios_power_on_password}`);
+  if (m.bios_hdd_password && m.bios_hdd_password !== 'Indisponível') parts.push(`HDD: ${m.bios_hdd_password}`);
+  if (parts.length === 0) return '—';
+  // Tudo indisponível = leitura não suportada neste fabricante.
+  if (parts.every((p) => p.endsWith('Indisponível'))) return 'Indisponível (leitura só em HP/Dell/Lenovo)';
+  return parts.join(' • ');
+}
+
+function formatComputrace(m: ReportDoc['machine']): string {
+  if (!m.computrace_module) return '—';
+  if (m.computrace_module === 'Não ativado') return 'Não detectado';
+  const v = m.computrace_version ? ` • v${m.computrace_version}` : '';
+  return `${m.computrace_module}${v}`;
 }
 
 function formatCpu(m: ReportDoc['machine']): string {
