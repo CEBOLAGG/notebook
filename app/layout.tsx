@@ -1,9 +1,25 @@
 import type { Metadata } from 'next';
+import { Open_Sans, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
 
+// Tipografia do painel: Open Sans (interface) + IBM Plex Mono (identificadores
+// e números). next/font hospeda localmente (sem FOUT).
+const fontSans = Open_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+const fontMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-mono',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
-  title: 'NotebookCheck — Relatórios',
-  description: 'Plataforma de relatórios de checklist técnico de notebooks',
+  title: 'Notelet — Estoque & relatórios',
+  description: 'Painel de estoque e relatórios de checklist técnico de notebooks',
 };
 
 // Script anti-flash: aplica .dark no <html> antes do React montar.
@@ -29,9 +45,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" className={`${fontSans.variable} ${fontMono.variable}`}>
       <head>
-        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>{children}</body>

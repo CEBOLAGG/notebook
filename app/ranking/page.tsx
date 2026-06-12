@@ -222,7 +222,7 @@ export default async function RankingPage({ searchParams }: PageProps) {
                         </td>
                         <td className="px-4 py-3 text-ink-700 dark:text-ink-200">
                           {m.vram_ok ? (
-                            <span className="text-ok dark:text-green-400">{m.vram_allocated_mb} MB ✓</span>
+                            <span className="text-ok dark:text-green-400">{m.vram_allocated_mb} MB OK</span>
                           ) : (
                             <span className="text-bad dark:text-red-400">corrompida</span>
                           )}

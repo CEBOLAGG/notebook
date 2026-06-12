@@ -50,7 +50,7 @@ export default async function ChangelogPage() {
   return (
     <Shell
       title="Novidades"
-      subtitle="Histórico de versões do aplicativo NotebookCheck"
+      subtitle="Histórico de versões do aplicativo Notelet"
     >
       <ol className="relative space-y-6 border-l border-ink-200 pl-6 dark:border-ink-700">
         {entries.map((entry, idx) => (

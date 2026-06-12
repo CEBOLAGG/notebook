@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Icon } from './Icon';
 
 /**
  * Botão "Remover" de relatório. Pede confirmação (a remoção é definitiva — o
@@ -57,7 +58,8 @@ export function DeleteReportButton({
       className={className}
       title="Remover relatório definitivamente"
     >
-      {busy ? 'Removendo…' : variant === 'button' ? '🗑 Remover' : 'Remover'}
+      {variant === 'button' ? <Icon name="trash" className="h-3.5 w-3.5" /> : null}
+      {busy ? 'Removendo…' : 'Remover'}
     </button>
   );
 }

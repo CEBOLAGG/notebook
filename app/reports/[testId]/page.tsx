@@ -4,6 +4,7 @@ import { Shell } from '@/components/Shell';
 import { Badge, ClassificationBadge, StatusBadge } from '@/components/StatusBadge';
 import { CommentForm } from '@/components/CommentForm';
 import { DeleteReportButton } from '@/components/DeleteReportButton';
+import { Icon } from '@/components/Icon';
 import { reportsRepo } from '@/lib/repository';
 import { INSPECTION_ITEMS, LEGACY_INSPECTION_LABELS } from '@/lib/inspection-items';
 import {
@@ -58,7 +59,8 @@ export default async function ReportDetailPage({ params }: PageProps) {
       actions={
         <>
           <Link href={`/reports/${encodeURIComponent(report.test_id)}/edit`} className="btn-primary">
-            ✏️ Editar relatório
+            <Icon name="pencil" className="h-3.5 w-3.5" />
+            Editar relatório
           </Link>
           <DeleteReportButton
             testId={report.test_id}

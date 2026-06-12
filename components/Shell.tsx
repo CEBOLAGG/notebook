@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { NavLink } from './NavLink';
 import { ThemeToggle } from './ThemeToggle';
 
 interface ShellProps {
@@ -9,73 +10,67 @@ interface ShellProps {
   children: ReactNode;
 }
 
+/**
+ * App-shell de ferramenta interna: sidebar fixa à esquerda no desktop
+ * (vira barra superior no mobile), cabeçalho de página fino e conteúdo
+ * denso — o painel também funciona como controle de estoque.
+ */
 export function Shell({ title, subtitle, actions, children }: ShellProps) {
   return (
-    <div className="min-h-screen">
-      <header className="sticky top-0 z-10 border-b border-ink-200 bg-white/80 backdrop-blur dark:border-ink-700 dark:bg-ink-900/80">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+    <div className="min-h-dvh lg:grid lg:grid-cols-[13.5rem_minmax(0,1fr)]">
+      {/* Sidebar (desktop) / topbar (mobile) */}
+      <aside className="z-20 flex flex-col border-b border-ink-200 bg-white dark:border-ink-700 dark:bg-ink-800 lg:sticky lg:top-0 lg:h-dvh lg:border-b-0 lg:border-r">
+        <div className="flex items-center justify-between px-4 pb-2 pt-3 lg:pb-4 lg:pt-4">
           <Link
             href="/"
-            className="flex items-center gap-3 text-ink-900 hover:text-brand-600 dark:text-white dark:hover:text-brand-400"
+            className="flex items-center gap-2.5 text-ink-900 transition-colors hover:opacity-80 dark:text-white"
           >
-            <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-600 font-mono text-sm font-bold tracking-tight text-white">
-              NC
+            <span className="grid h-8 w-8 place-items-center rounded-md bg-ink-900 font-mono text-[13px] font-semibold text-white dark:bg-brand-600">
+              N
             </span>
             <div className="leading-tight">
-              <div className="text-sm font-semibold">NotebookCheck</div>
-              <div className="text-xs text-ink-500 dark:text-ink-400">
-                Painel de relatórios
-              </div>
+              <div className="text-[13px] font-semibold tracking-tight">Notelet</div>
+              <div className="text-[11px] text-ink-500 dark:text-ink-400">Estoque &amp; relatórios</div>
             </div>
           </Link>
-          <nav className="flex items-center gap-1">
-            <Link
-              href="/"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-ink-700 hover:bg-ink-100 dark:text-ink-200 dark:hover:bg-ink-700"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/reports"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-ink-700 hover:bg-ink-100 dark:text-ink-200 dark:hover:bg-ink-700"
-            >
-              Relatórios
-            </Link>
-            <Link
-              href="/ranking"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-ink-700 hover:bg-ink-100 dark:text-ink-200 dark:hover:bg-ink-700"
-            >
-              Ranking
-            </Link>
-            <Link
-              href="/changelog"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-ink-700 hover:bg-ink-100 dark:text-ink-200 dark:hover:bg-ink-700"
-            >
-              Novidades
-            </Link>
-            <div className="ml-2">
-              <ThemeToggle />
-            </div>
-          </nav>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-7xl px-6 py-8">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-semibold text-ink-900 dark:text-white">
-              {title}
-            </h1>
-            {subtitle ? (
-              <p className="mt-1 text-sm text-ink-500 dark:text-ink-400">
-                {subtitle}
-              </p>
-            ) : null}
+          <div className="lg:hidden">
+            <ThemeToggle />
           </div>
-          {actions ? <div className="flex gap-2">{actions}</div> : null}
         </div>
-        {children}
-      </main>
+
+        <nav
+          aria-label="Navegação principal"
+          className="flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-col lg:overflow-visible lg:pb-0 lg:pt-1"
+        >
+          <NavLink href="/" icon="grid">Visão geral</NavLink>
+          <NavLink href="/reports" icon="list">Relatórios</NavLink>
+          <NavLink href="/ranking" icon="chart">Ranking</NavLink>
+          <NavLink href="/changelog" icon="bell">Novidades</NavLink>
+        </nav>
+
+        <div className="mt-auto hidden items-center justify-between border-t border-ink-100 px-4 py-3 dark:border-ink-700 lg:flex">
+          <span className="text-[11px] text-ink-400 dark:text-ink-500">Notelet</span>
+          <ThemeToggle />
+        </div>
+      </aside>
+
+      {/* Área de conteúdo */}
+      <div className="min-w-0">
+        <header className="border-b border-ink-200 bg-white px-6 py-4 dark:border-ink-700 dark:bg-ink-800/60">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h1 className="text-lg font-semibold tracking-tight text-ink-900 dark:text-white">
+                {title}
+              </h1>
+              {subtitle ? (
+                <p className="mt-0.5 text-[13px] text-ink-500 dark:text-ink-400">{subtitle}</p>
+              ) : null}
+            </div>
+            {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
+          </div>
+        </header>
+        <main className="px-6 py-6">{children}</main>
+      </div>
     </div>
   );
 }

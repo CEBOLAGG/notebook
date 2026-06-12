@@ -16,52 +16,79 @@ html.dark body {
   @apply bg-ink-900 text-ink-100;
 }
 
+/* Títulos com a fonte técnica (Fira Code) — identidade do painel. */
+h1, h2, h3 {
+  @apply font-display tracking-tight;
+}
+
+/* Foco visível consistente para navegação por teclado (WCAG). */
+:focus-visible {
+  @apply outline-none ring-2 ring-brand-600 ring-offset-2 ring-offset-ink-50;
+}
+html.dark :focus-visible {
+  @apply ring-brand-400 ring-offset-ink-900;
+}
+
+/* Movimento reduzido: corta transições/animações para quem pediu. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
 @layer components {
   .card {
-    @apply rounded-xl border border-ink-200 bg-white shadow-card transition-colors;
+    @apply rounded-md border border-ink-200 bg-white shadow-card transition-colors;
   }
   html.dark .card {
     @apply border-ink-700 bg-ink-800 shadow-none;
   }
 
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors;
+    @apply inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-primary {
-    @apply btn bg-brand-600 text-white hover:bg-brand-700;
+    @apply btn bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800;
   }
   html.dark .btn-primary {
-    @apply bg-brand-500 hover:bg-brand-400;
+    @apply bg-brand-600 hover:bg-brand-500 active:bg-brand-400;
   }
   .btn-ghost {
-    @apply btn text-ink-700 hover:bg-ink-100;
+    @apply btn text-ink-700 hover:bg-ink-100 active:bg-ink-200;
   }
   html.dark .btn-ghost {
-    @apply text-ink-200 hover:bg-ink-700;
+    @apply text-ink-200 hover:bg-ink-700 active:bg-ink-600;
   }
   .btn-outline {
-    @apply btn border border-ink-200 bg-white text-ink-700 hover:bg-ink-50;
+    @apply btn border border-ink-300 bg-white text-ink-700 hover:border-ink-400 hover:bg-ink-50;
   }
   html.dark .btn-outline {
-    @apply border-ink-700 bg-ink-800 text-ink-200 hover:bg-ink-700;
+    @apply border-ink-600 bg-ink-800 text-ink-200 hover:border-ink-500 hover:bg-ink-700;
   }
 
   .input,
   .textarea,
   .select {
-    @apply w-full rounded-lg border border-ink-200 bg-white px-3 py-2 text-sm text-ink-800 outline-none transition-shadow placeholder:text-ink-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100;
+    @apply w-full rounded-md border border-ink-300 bg-white px-3 py-2 text-sm text-ink-900 outline-none transition-shadow placeholder:text-ink-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-100;
   }
   html.dark .input,
   html.dark .textarea,
   html.dark .select {
-    @apply border-ink-700 bg-ink-800 text-ink-100 placeholder:text-ink-500 focus:border-brand-400 focus:ring-brand-900;
+    @apply border-ink-600 bg-ink-800 text-ink-100 placeholder:text-ink-500 focus:border-brand-400 focus:ring-brand-900;
   }
   .textarea {
     @apply min-h-[5rem] resize-y;
   }
 
+  /* Badges de status com PONTO indicador — o estado não depende só da cor. */
   .badge {
-    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
+    @apply inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-[11px] font-medium;
+  }
+  .badge::before {
+    content: '';
+    @apply h-1.5 w-1.5 shrink-0 rounded-full bg-current;
   }
   .badge-ok {
     @apply badge bg-green-50 text-ok ring-1 ring-inset ring-green-200;
@@ -88,10 +115,16 @@ html.dark body {
     @apply bg-ink-700 text-ink-300 ring-ink-600;
   }
 
+  /* Rótulos técnicos em mono — reforça a identidade de dados do painel. */
   .label {
-    @apply text-xs font-medium uppercase tracking-wide text-ink-500;
+    @apply font-mono text-[11px] font-medium uppercase tracking-wider text-ink-500;
   }
   html.dark .label {
     @apply text-ink-400;
+  }
+
+  /* Valores numéricos/identificadores (NTB, serial, contagens). */
+  .data-value {
+    @apply font-mono tabular-nums;
   }
 }
