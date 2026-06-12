@@ -1,14 +1,29 @@
 {
-  "version": "1.3.3",
-  "date": "2026-06-11",
-  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.3.3/NotebookCheck.exe",
-  "sha256": "F9314831CBE1E9DA987F626D1672B50F8D01993134BCD6C2C092A62FFAB8DFF2",
+  "version": "1.4.0",
+  "date": "2026-06-12",
+  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.4.0/NotebookCheck.exe",
+  "sha256": "996F15A79C80FFA6939BBD9EA9B111770BA735C188ACEEF9926F091C48263D9C",
   "changelog": [
-    "Detecção de Windows Autopilot refeita do zero (em beta): agora combina 4 fontes independentes — ponte WMI do MDM, dsregcmd, log de eventos do Autopilot e registro do Windows (perfil cloud-assigned, política e enrollments MDM/Intune) — e mostra um nível de confiança (Provável/Possível/Improvável) com pontuação 0-100, em vez de afirmar certeza.",
-    "O resultado do Autopilot inclui tenant detectado, vínculo com Entra ID e evidências encontradas; falsos positivos das chaves padrão do Windows e das autoridades internas foram filtrados.",
-    "Campo \"Autopilot (beta)\" de volta na aba de segurança e no relatório do painel."
+    "Novos testes: brilho da tela, microfone com medidor ao vivo (VU), throttling térmico, descarga de bateria, taxa de atualização, biometria, leitor de cartão e portas USB",
+    "Sensores ao vivo na etapa de desempenho: temperatura, clock real (efetivo) e ventoinhas",
+    "Teclado e touchpad movidos para Inputs e portas; tecla com defeito selecionável clicando no próprio teclado",
+    "Mais padrões no teste de tela (gradiente, xadrez e nitidez de texto)",
+    "Autopilot: detecção pelo arquivo de perfil no disco (PCs provisionados) e correção de falsos positivos — verificação no tenant em desenvolvimento (beta)",
+    "Inspeção física simplificada: 4 fotos principais + fotos de defeito opcionais, sem obrigatoriedade",
+    "Código NTB padronizado com prefixo automático (123 vira NTB-123) e técnico responsável obrigatório",
+    "Envio do relatório agora acontece apenas na página de resumo",
+    "Mais detalhes de hardware (RAM por pente, GPU, CPU) e correções no check de senha da BIOS"
   ],
   "history": [
+    {
+      "version": "1.3.3",
+      "date": "2026-06-11",
+      "changelog": [
+        "Detecção de Windows Autopilot refeita do zero (em beta): agora combina 4 fontes independentes — ponte WMI do MDM, dsregcmd, log de eventos do Autopilot e registro do Windows (perfil cloud-assigned, política e enrollments MDM/Intune) — e mostra um nível de confiança (Provável/Possível/Improvável) com pontuação 0-100, em vez de afirmar certeza.",
+        "O resultado do Autopilot inclui tenant detectado, vínculo com Entra ID e evidências encontradas; falsos positivos das chaves padrão do Windows e das autoridades internas foram filtrados.",
+        "Campo \"Autopilot (beta)\" de volta na aba de segurança e no relatório do painel."
+      ]
+    },
     {
       "version": "1.3.2",
       "date": "2026-06-10",

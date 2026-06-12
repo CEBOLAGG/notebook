@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { Shell } from '@/components/Shell';
 import { Badge, ClassificationBadge, StatusBadge } from '@/components/StatusBadge';
 import { CommentForm } from '@/components/CommentForm';
+import { DeleteReportButton } from '@/components/DeleteReportButton';
 import { reportsRepo } from '@/lib/repository';
 import { INSPECTION_ITEMS, LEGACY_INSPECTION_LABELS } from '@/lib/inspection-items';
 import {
@@ -42,7 +43,11 @@ export default async function ReportDetailPage({ params }: PageProps) {
 
   // Conjunto de testes automáticos esperados; os ausentes em report.tests
   // são considerados "não realizados".
-  const EXPECTED_TESTS = ['bateria', 'carregador', 'wifi', 'bluetooth', 'internet', 'usb', 'taxa_atualizacao', 'biometria', 'leitor_cartao', 'hdmi', 'audio', 'microfone', 'camera', 'tela', 'teclado', 'touchpad', 'stress'];
+  // 'audio' (tom 1 kHz) foi aposentado — o estéreo L/R cobre a saída de som.
+  // Os testes do técnico (estéreo, microfone, câmera, tela, brilho, teclado,
+  // touchpad, descarga, throttling) só aparecem no app quando executados; os
+  // pulados são acusados aqui como "não realizados".
+  const EXPECTED_TESTS = ['bateria', 'carregador', 'wifi', 'bluetooth', 'internet', 'usb', 'taxa_atualizacao', 'biometria', 'leitor_cartao', 'hdmi', 'estereo', 'microfone', 'camera', 'tela', 'brilho', 'teclado', 'touchpad', 'descarga_bateria', 'throttling', 'stress'];
   const doneKeys = new Set(Object.keys(report.tests ?? {}));
   const untestedTests = EXPECTED_TESTS.filter((k) => !doneKeys.has(k));
 
@@ -55,6 +60,12 @@ export default async function ReportDetailPage({ params }: PageProps) {
           <Link href={`/reports/${encodeURIComponent(report.test_id)}/edit`} className="btn-primary">
             ✏️ Editar relatório
           </Link>
+          <DeleteReportButton
+            testId={report.test_id}
+            label={m.ntb_code || undefined}
+            redirectTo="/reports"
+            variant="button"
+          />
           <Link href="/reports" className="btn-outline">
             Voltar
           </Link>
