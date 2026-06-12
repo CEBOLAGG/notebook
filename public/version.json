@@ -2,7 +2,7 @@
   "version": "1.5.0",
   "date": "2026-06-12",
   "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.5.0/NotebookCheck.exe",
-  "sha256": "92C70C0A289BDD5F123CE85084C76EFF56E81FE24CD268BAAB04D277A84CE4F9",
+  "sha256": "08017A096A8067CADFA6FDC0939071715FB1F163580F749FABDA0296BFBFF502",
   "changelog": [
     "Reteste reformulado: mostra as falhas do relatório anterior e deixa escolher entre retestar só as falhas (2x cada) ou refazer o checklist completo sobrescrevendo o antigo",
     "Refazer por cima preserva os dados antigos (stress, testes não re-executados, checklist manual, observações) e pré-preenche NTB, localização e técnico",
