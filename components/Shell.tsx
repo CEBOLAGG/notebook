@@ -18,14 +18,14 @@ interface ShellProps {
 export function Shell({ title, subtitle, actions, children }: ShellProps) {
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[13.5rem_minmax(0,1fr)]">
-      {/* Sidebar (desktop) / topbar (mobile) */}
-      <aside className="z-20 flex flex-col border-b border-ink-200 bg-white dark:border-ink-700 dark:bg-ink-800 lg:sticky lg:top-0 lg:h-dvh lg:border-b-0 lg:border-r">
+      {/* Sidebar (desktop) / topbar (mobile) — barra de vidro */}
+      <aside className="glass-bar z-20 flex flex-col border-b-0 !border-l-0 !border-t-0 lg:sticky lg:top-0 lg:h-dvh lg:!border-b-0 lg:border-r">
         <div className="flex items-center justify-between px-4 pb-2 pt-3 lg:pb-4 lg:pt-4">
           <Link
             href="/"
             className="flex items-center gap-2.5 text-ink-900 transition-colors hover:opacity-80 dark:text-white"
           >
-            <span className="grid h-8 w-8 place-items-center rounded-md bg-ink-900 font-mono text-[13px] font-semibold text-white dark:bg-brand-600">
+            <span className="chroma grid h-8 w-8 place-items-center rounded-lg bg-ink-900/90 font-mono text-[13px] font-semibold text-white shadow-sm dark:bg-brand-600/90">
               N
             </span>
             <div className="leading-tight">
@@ -48,7 +48,7 @@ export function Shell({ title, subtitle, actions, children }: ShellProps) {
           <NavLink href="/changelog" icon="bell">Novidades</NavLink>
         </nav>
 
-        <div className="mt-auto hidden items-center justify-between border-t border-ink-100 px-4 py-3 dark:border-ink-700 lg:flex">
+        <div className="mt-auto hidden items-center justify-between border-t border-white/40 px-4 py-3 dark:border-white/10 lg:flex">
           <span className="text-[11px] text-ink-400 dark:text-ink-500">Notelet</span>
           <ThemeToggle />
         </div>
@@ -56,7 +56,7 @@ export function Shell({ title, subtitle, actions, children }: ShellProps) {
 
       {/* Área de conteúdo */}
       <div className="min-w-0">
-        <header className="border-b border-ink-200 bg-white px-6 py-4 dark:border-ink-700 dark:bg-ink-800/60">
+        <header className="glass-bar !border-l-0 !border-r-0 !border-t-0 border-b px-6 py-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h1 className="text-lg font-semibold tracking-tight text-ink-900 dark:text-white">

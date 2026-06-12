@@ -174,7 +174,7 @@ export default async function RankingPage({ searchParams }: PageProps) {
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-ink-50 text-left text-xs uppercase tracking-wide text-ink-500 dark:bg-ink-800/60 dark:text-ink-400">
+                  <thead className="bg-white/35 text-left font-mono text-[11px] uppercase tracking-wider text-ink-500 dark:bg-white/5 dark:text-ink-400">
                     <tr>
                       <th className="px-4 py-3">Pos.</th>
                       <th className="px-4 py-3">NTB</th>
@@ -188,9 +188,9 @@ export default async function RankingPage({ searchParams }: PageProps) {
                       <th className="px-4 py-3"/>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-ink-100 dark:divide-ink-700">
+                  <tbody className="divide-y divide-ink-200/50 dark:divide-white/10">
                     {g.machines.map((m, i) => (
-                      <tr key={m.test_id} className="hover:bg-ink-50 dark:hover:bg-ink-700/40">
+                      <tr key={m.test_id} className="hover:bg-white/45 dark:hover:bg-white/5">
                         <td className="px-4 py-3 font-semibold text-ink-900 dark:text-white">#{i + 1}</td>
                         <td className="px-4 py-3 font-mono text-xs">{m.ntb_code || '—'}</td>
                         <td className="px-4 py-3">

@@ -52,7 +52,7 @@ export function ThemeToggle() {
     <button
       onClick={toggle}
       aria-label={theme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-ink-200 bg-white text-ink-600 transition-colors hover:bg-ink-50 dark:border-ink-700 dark:bg-ink-800 dark:text-ink-200 dark:hover:bg-ink-700"
+      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/60 bg-white/45 text-ink-600 shadow-sm transition-colors hover:bg-white/70 dark:border-white/10 dark:bg-white/5 dark:text-ink-200 dark:hover:bg-white/10"
     >
       {theme === 'dark' ? (
         // Sun

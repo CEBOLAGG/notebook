@@ -86,7 +86,7 @@ export default async function ReportsListPage({ searchParams }: PageProps) {
         </div>
         <div className="card overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-ink-50 text-left text-xs uppercase tracking-wide text-ink-500 dark:bg-ink-800/60 dark:text-ink-400">
+            <thead className="bg-white/35 text-left font-mono text-[11px] uppercase tracking-wider text-ink-500 dark:bg-white/5 dark:text-ink-400">
               <tr>
                 <th className="px-4 py-2.5">NTB</th>
                 <th className="px-4 py-2.5">Equipamento</th>
@@ -98,9 +98,9 @@ export default async function ReportsListPage({ searchParams }: PageProps) {
                 <th className="px-4 py-2.5" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-ink-100 dark:divide-ink-700">
+            <tbody className="divide-y divide-ink-200/50 dark:divide-white/10">
               {items.map((r) => (
-                <tr key={r.test_id} className="hover:bg-ink-50 dark:hover:bg-ink-700/40">
+                <tr key={r.test_id} className="hover:bg-white/45 dark:hover:bg-white/5">
                   <td className="data-value px-4 py-2.5 text-xs font-semibold text-brand-700 dark:text-brand-400">
                     {r.ntb_code || '—'}
                   </td>

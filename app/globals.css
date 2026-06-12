@@ -7,16 +7,31 @@ body {
   height: 100%;
 }
 
+/*
+ * Liquid Glass (estilo Apple): o vidro precisa de COR atrás para refratar.
+ * O fundo é um mesh gradient fixo (verde/ciano/violeta) sobre o qual os
+ * painéis translúcidos flutuam com blur + saturação.
+ */
 body {
-  @apply bg-ink-50 text-ink-800 antialiased transition-colors duration-150;
+  @apply text-ink-800 antialiased transition-colors duration-150;
   font-feature-settings: 'cv11', 'ss01', 'ss03';
+  background-color: #edf1f7;
+  background-image:
+    radial-gradient(42rem 30rem at 10% -10%, rgba(16, 185, 129, 0.16), transparent 60%),
+    radial-gradient(38rem 28rem at 92% 8%, rgba(56, 189, 248, 0.18), transparent 60%),
+    radial-gradient(46rem 32rem at 45% 115%, rgba(167, 139, 250, 0.15), transparent 60%);
+  background-attachment: fixed;
 }
 
 html.dark body {
-  @apply bg-ink-900 text-ink-100;
+  @apply text-ink-100;
+  background-color: #0b1120;
+  background-image:
+    radial-gradient(42rem 30rem at 10% -10%, rgba(16, 185, 129, 0.14), transparent 60%),
+    radial-gradient(38rem 28rem at 92% 8%, rgba(56, 189, 248, 0.12), transparent 60%),
+    radial-gradient(46rem 32rem at 45% 120%, rgba(129, 140, 248, 0.16), transparent 60%);
 }
 
-/* Títulos com a fonte técnica (Fira Code) — identidade do painel. */
 h1, h2, h3 {
   @apply font-display tracking-tight;
 }
@@ -29,7 +44,6 @@ html.dark :focus-visible {
   @apply ring-brand-400 ring-offset-ink-900;
 }
 
-/* Movimento reduzido: corta transições/animações para quem pediu. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     transition-duration: 0.01ms !important;
@@ -38,45 +52,99 @@ html.dark :focus-visible {
   }
 }
 
-@layer components {
-  .card {
-    @apply rounded-md border border-ink-200 bg-white shadow-card transition-colors;
-  }
-  html.dark .card {
-    @apply border-ink-700 bg-ink-800 shadow-none;
-  }
+/* ============================ Superfícies de vidro ============================ */
 
+/* Painel de vidro: blur + saturação, highlight especular no topo e ANEL
+   ESPECTRAL nas arestas (aberração cromática sutil, mascarada só na borda). */
+.card,
+.glass-bar {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.58);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+  backdrop-filter: blur(22px) saturate(170%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 8px 28px rgba(15, 23, 42, 0.08);
+  transition: background-color 150ms, border-color 150ms;
+}
+html.dark .card,
+html.dark .glass-bar {
+  border-color: rgba(255, 255, 255, 0.09);
+  background: rgba(15, 23, 42, 0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 10px 32px rgba(0, 0, 0, 0.35);
+}
+
+.card {
+  border-radius: 1rem;
+}
+
+/* Aberração cromática: anel cônico espectral confinado à borda via mask. */
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  background: conic-gradient(
+    from 210deg,
+    rgba(255, 64, 129, 0.55),
+    rgba(64, 156, 255, 0.55),
+    rgba(64, 224, 160, 0.55),
+    rgba(255, 196, 64, 0.55),
+    rgba(255, 64, 129, 0.55)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0.14;
+}
+html.dark .card::after {
+  opacity: 0.2;
+}
+
+/* Navegadores sem backdrop-filter: superfície sólida legível (fallback). */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .card, .glass-bar { background: #ffffff; }
+  html.dark .card, html.dark .glass-bar { background: #1e293b; }
+}
+
+@layer components {
   .btn {
-    @apply inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-primary {
-    @apply btn bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800;
+    @apply btn bg-brand-600 text-white shadow-sm hover:bg-brand-700 active:bg-brand-800;
   }
   html.dark .btn-primary {
     @apply bg-brand-600 hover:bg-brand-500 active:bg-brand-400;
   }
   .btn-ghost {
-    @apply btn text-ink-700 hover:bg-ink-100 active:bg-ink-200;
+    @apply btn text-ink-700 hover:bg-white/50 active:bg-white/70;
   }
   html.dark .btn-ghost {
-    @apply text-ink-200 hover:bg-ink-700 active:bg-ink-600;
+    @apply text-ink-200 hover:bg-white/10 active:bg-white/15;
   }
   .btn-outline {
-    @apply btn border border-ink-300 bg-white text-ink-700 hover:border-ink-400 hover:bg-ink-50;
+    @apply btn border border-white/60 bg-white/45 text-ink-700 shadow-sm hover:bg-white/70;
   }
   html.dark .btn-outline {
-    @apply border-ink-600 bg-ink-800 text-ink-200 hover:border-ink-500 hover:bg-ink-700;
+    @apply border-white/10 bg-white/5 text-ink-200 hover:bg-white/10;
   }
 
   .input,
   .textarea,
   .select {
-    @apply w-full rounded-md border border-ink-300 bg-white px-3 py-2 text-sm text-ink-900 outline-none transition-shadow placeholder:text-ink-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-100;
+    @apply w-full rounded-lg border border-white/60 bg-white/55 px-3 py-2 text-sm text-ink-900 outline-none transition-shadow placeholder:text-ink-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-200/60;
   }
   html.dark .input,
   html.dark .textarea,
   html.dark .select {
-    @apply border-ink-600 bg-ink-800 text-ink-100 placeholder:text-ink-500 focus:border-brand-400 focus:ring-brand-900;
+    @apply border-white/10 bg-ink-900/40 text-ink-100 placeholder:text-ink-500 focus:border-brand-400 focus:ring-brand-900;
   }
   .textarea {
     @apply min-h-[5rem] resize-y;
@@ -84,38 +152,38 @@ html.dark :focus-visible {
 
   /* Badges de status com PONTO indicador — o estado não depende só da cor. */
   .badge {
-    @apply inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-[11px] font-medium;
+    @apply inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium ring-1 ring-inset;
   }
   .badge::before {
     content: '';
     @apply h-1.5 w-1.5 shrink-0 rounded-full bg-current;
   }
   .badge-ok {
-    @apply badge bg-green-50 text-ok ring-1 ring-inset ring-green-200;
+    @apply badge bg-green-100/70 text-ok ring-green-600/20;
   }
   .badge-warn {
-    @apply badge bg-amber-50 text-warn ring-1 ring-inset ring-amber-200;
+    @apply badge bg-amber-100/70 text-warn ring-amber-600/20;
   }
   .badge-bad {
-    @apply badge bg-red-50 text-bad ring-1 ring-inset ring-red-200;
+    @apply badge bg-red-100/70 text-bad ring-red-600/20;
   }
   .badge-mute {
-    @apply badge bg-ink-100 text-ink-600 ring-1 ring-inset ring-ink-200;
+    @apply badge bg-white/50 text-ink-600 ring-ink-400/20;
   }
   html.dark .badge-ok {
-    @apply bg-green-900/30 text-green-300 ring-green-800;
+    @apply bg-green-400/10 text-green-300 ring-green-400/25;
   }
   html.dark .badge-warn {
-    @apply bg-amber-900/30 text-amber-300 ring-amber-800;
+    @apply bg-amber-400/10 text-amber-300 ring-amber-400/25;
   }
   html.dark .badge-bad {
-    @apply bg-red-900/30 text-red-300 ring-red-800;
+    @apply bg-red-400/10 text-red-300 ring-red-400/25;
   }
   html.dark .badge-mute {
-    @apply bg-ink-700 text-ink-300 ring-ink-600;
+    @apply bg-white/10 text-ink-300 ring-white/15;
   }
 
-  /* Rótulos técnicos em mono — reforça a identidade de dados do painel. */
+  /* Rótulos técnicos em mono. */
   .label {
     @apply font-mono text-[11px] font-medium uppercase tracking-wider text-ink-500;
   }
@@ -126,5 +194,12 @@ html.dark :focus-visible {
   /* Valores numéricos/identificadores (NTB, serial, contagens). */
   .data-value {
     @apply font-mono tabular-nums;
+  }
+
+  /* Logo com leve aberração cromática (texto). */
+  .chroma {
+    text-shadow:
+      -1px 0 rgba(255, 64, 129, 0.35),
+      1px 0 rgba(64, 200, 255, 0.35);
   }
 }
