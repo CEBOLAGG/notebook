@@ -256,6 +256,20 @@ export const reportsRepo = {
     return r.deletedCount > 0;
   },
 
+  /** Remove UMA foto da inspeção física do relatório (modo edição). */
+  async removeInspectionPhoto(testId: string, itemKey: string): Promise<boolean> {
+    const db = await getDb();
+    const col = db.collection<ReportDoc>(COLLECTION);
+    const r = await col.updateOne(
+      { test_id: testId },
+      {
+        $pull: { inspection_photos: { item_key: itemKey } } as never,
+        $set: { edited_at: new Date().toISOString() },
+      },
+    );
+    return r.modifiedCount > 0;
+  },
+
   /**
    * Atualização livre de campos do relatório (edição manual pelo técnico no
    * site). Aceita um objeto parcial e aplica via $set. Protege chaves

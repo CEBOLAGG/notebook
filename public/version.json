@@ -1,20 +1,35 @@
 {
-  "version": "1.4.0",
+  "version": "1.5.0",
   "date": "2026-06-12",
-  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.4.0/NotebookCheck.exe",
-  "sha256": "996F15A79C80FFA6939BBD9EA9B111770BA735C188ACEEF9926F091C48263D9C",
+  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.5.0/NotebookCheck.exe",
+  "sha256": "92C70C0A289BDD5F123CE85084C76EFF56E81FE24CD268BAAB04D277A84CE4F9",
   "changelog": [
-    "Novos testes: brilho da tela, microfone com medidor ao vivo (VU), throttling térmico, descarga de bateria, taxa de atualização, biometria, leitor de cartão e portas USB",
-    "Sensores ao vivo na etapa de desempenho: temperatura, clock real (efetivo) e ventoinhas",
-    "Teclado e touchpad movidos para Inputs e portas; tecla com defeito selecionável clicando no próprio teclado",
-    "Mais padrões no teste de tela (gradiente, xadrez e nitidez de texto)",
-    "Autopilot: detecção pelo arquivo de perfil no disco (PCs provisionados) e correção de falsos positivos — verificação no tenant em desenvolvimento (beta)",
-    "Inspeção física simplificada: 4 fotos principais + fotos de defeito opcionais, sem obrigatoriedade",
-    "Código NTB padronizado com prefixo automático (123 vira NTB-123) e técnico responsável obrigatório",
-    "Envio do relatório agora acontece apenas na página de resumo",
-    "Mais detalhes de hardware (RAM por pente, GPU, CPU) e correções no check de senha da BIOS"
+    "Reteste reformulado: mostra as falhas do relatório anterior e deixa escolher entre retestar só as falhas (2x cada) ou refazer o checklist completo sobrescrevendo o antigo",
+    "Refazer por cima preserva os dados antigos (stress, testes não re-executados, checklist manual, observações) e pré-preenche NTB, localização e técnico",
+    "Problemas da inspeção física (fotos com defeito) aparecem no plano do reteste",
+    "Resultados dos testes em grade de 2 colunas com posição fixa (não trocam mais de lugar ao rodar)",
+    "Teste de teclado: numpad incluído e seleção de layout (ABNT2/US) por dropdown dentro da janela",
+    "Teclado e touchpad de volta aos testes do técnico; teste de tom 1 kHz removido (estéreo L/R cobre)",
+    "Testes do técnico só entram na grade quando executados — os pulados são acusados no painel",
+    "Ícones profissionais nas portas (ícones nativos do Windows no lugar de emojis)",
+    "Correções: resultados de testes manuais sumiam ao navegar entre etapas; era possível concluir sem enviar o relatório; status Atenção/Não testado apareciam vazios na grade"
   ],
   "history": [
+    {
+      "version": "1.4.0",
+      "date": "2026-06-12",
+      "changelog": [
+        "Novos testes: brilho da tela, microfone com medidor ao vivo (VU), throttling térmico, descarga de bateria, taxa de atualização, biometria, leitor de cartão e portas USB",
+        "Sensores ao vivo na etapa de desempenho: temperatura, clock real (efetivo) e ventoinhas",
+        "Teclado e touchpad movidos para Inputs e portas; tecla com defeito selecionável clicando no próprio teclado",
+        "Mais padrões no teste de tela (gradiente, xadrez e nitidez de texto)",
+        "Autopilot: detecção pelo arquivo de perfil no disco (PCs provisionados) e correção de falsos positivos — verificação no tenant em desenvolvimento (beta)",
+        "Inspeção física simplificada: 4 fotos principais + fotos de defeito opcionais, sem obrigatoriedade",
+        "Código NTB padronizado com prefixo automático (123 vira NTB-123) e técnico responsável obrigatório",
+        "Envio do relatório agora acontece apenas na página de resumo",
+        "Mais detalhes de hardware (RAM por pente, GPU, CPU) e correções no check de senha da BIOS"
+      ]
+    },
     {
       "version": "1.3.3",
       "date": "2026-06-11",

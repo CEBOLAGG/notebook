@@ -6,14 +6,13 @@ import type { ReportDoc } from '@/lib/types';
 
 const CLASSIFICATIONS = ['Aprovado', 'Aprovado com ressalvas', 'Reprovado'];
 const TEST_STATUSES = ['OK', 'Atenção', 'Falha', 'Não testado', 'Não aplicável'];
-const MANUAL_STATUSES = ['OK', 'Com defeito', 'Não testado', 'Observação'];
 const INSPECTION_STATUSES: { value: '' | 'ok' | 'problema'; label: string }[] = [
   { value: 'ok', label: 'OK' },
   { value: 'problema', label: 'Com problema' },
   { value: '', label: 'Sem avaliação' },
 ];
 
-type Section = 'ident' | 'tests' | 'manual' | 'inspection';
+type Section = 'ident' | 'tests' | 'inspection';
 
 interface InspectionEdit {
   item_key: string;
@@ -50,9 +49,6 @@ export function ReportEditForm({ report }: { report: ReportDoc }) {
   const [tests, setTests] = useState(() =>
     Object.entries(report.tests ?? {}).map(([key, t]) => ({ key, status: t.status, details: t.details })),
   );
-  const [manual, setManual] = useState(() =>
-    Object.entries(report.manual_checklist ?? {}).map(([key, item]) => ({ key, status: item.status, notes: item.notes })),
-  );
   const [inspection, setInspection] = useState<InspectionEdit[]>(() =>
     (report.inspection_photos ?? []).map((p) => ({
       item_key: p.item_key,
@@ -67,11 +63,33 @@ export function ReportEditForm({ report }: { report: ReportDoc }) {
     const t: { id: Section; label: string; show: boolean }[] = [
       { id: 'ident', label: 'Identificação', show: true },
       { id: 'tests', label: `Testes (${tests.length})`, show: tests.length > 0 },
-      { id: 'manual', label: `Inspeção manual (${manual.length})`, show: manual.length > 0 },
       { id: 'inspection', label: `Fotos (${inspection.length})`, show: inspection.length > 0 },
     ];
     return t.filter((x) => x.show);
-  }, [tests.length, manual.length, inspection.length]);
+  }, [tests.length, inspection.length]);
+
+  /** Remove a foto do relatório imediatamente (com confirmação). */
+  async function removePhoto(itemKey: string, label: string) {
+    if (!window.confirm(`Remover a foto "${label}" do relatório?\n\nA imagem é apagada definitivamente.`)) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const r = await fetch(`/api/reports/${encodeURIComponent(report.test_id)}/inspection`, {
+        method: 'DELETE',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ item_key: itemKey }),
+      });
+      if (!r.ok) {
+        const body = await r.json().catch(() => ({}));
+        throw new Error(body?.message || body?.error || `HTTP ${r.status}`);
+      }
+      setInspection((arr) => arr.filter((x) => x.item_key !== itemKey));
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function save() {
     setBusy(true);
@@ -99,12 +117,7 @@ export function ReportEditForm({ report }: { report: ReportDoc }) {
         };
       }
       patch['tests'] = testsObj;
-
-      const manualObj: Record<string, unknown> = {};
-      for (const item of manual) {
-        manualObj[item.key] = { status: item.status, notes: item.notes };
-      }
-      patch['manual_checklist'] = manualObj;
+      // manual_checklist não é mais editável aqui — o que está no banco permanece.
 
       const r = await fetch(`/api/reports/${encodeURIComponent(report.test_id)}`, {
         method: 'PATCH',
@@ -205,23 +218,6 @@ export function ReportEditForm({ report }: { report: ReportDoc }) {
         </div>
       ) : null}
 
-      {section === 'manual' ? (
-        <div className="space-y-2">
-          {manual.map((item, i) => (
-            <div key={item.key} className="grid items-center gap-2 sm:grid-cols-[160px_160px_1fr]">
-              <span className="text-sm text-ink-700 dark:text-ink-200">{item.key}</span>
-              <select className="select" value={item.status}
-                onChange={(e) => setManual((arr) => arr.map((x, j) => j === i ? { ...x, status: e.target.value } : x))}>
-                {!MANUAL_STATUSES.includes(item.status) ? <option value={item.status}>{item.status}</option> : null}
-                {MANUAL_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-              </select>
-              <input className="input" value={item.notes}
-                onChange={(e) => setManual((arr) => arr.map((x, j) => j === i ? { ...x, notes: e.target.value } : x))} />
-            </div>
-          ))}
-        </div>
-      ) : null}
-
       {section === 'inspection' ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {inspection.map((it, i) => (
@@ -240,6 +236,13 @@ export function ReportEditForm({ report }: { report: ReportDoc }) {
                 <textarea className="textarea w-full" rows={2} placeholder="Comentário do item"
                   value={it.note}
                   onChange={(e) => setInspection((arr) => arr.map((x, j) => j === i ? { ...x, note: e.target.value } : x))} />
+                <button
+                  onClick={() => removePhoto(it.item_key, it.label)}
+                  disabled={busy}
+                  className="w-full rounded-lg border border-red-200 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10"
+                >
+                  🗑 Remover foto
+                </button>
               </div>
             </div>
           ))}

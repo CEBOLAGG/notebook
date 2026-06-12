@@ -45,3 +45,38 @@ export async function PATCH(
     );
   }
 }
+
+/**
+ * Remove UMA foto da inspeção física do relatório (modo edição).
+ * Corpo: { item_key: string }.
+ */
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ testId: string }> },
+) {
+  const { testId } = await params;
+  let body: { item_key?: string };
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'JSON inválido' }, { status: 400 });
+  }
+  const itemKey = (body.item_key ?? '').trim();
+  if (!itemKey) {
+    return NextResponse.json({ error: 'item_key obrigatório' }, { status: 400 });
+  }
+
+  try {
+    const removed = await reportsRepo.removeInspectionPhoto(testId, itemKey);
+    if (!removed) {
+      return NextResponse.json({ error: 'not_found' }, { status: 404 });
+    }
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error('[reports.inspection.DELETE]', err);
+    return NextResponse.json(
+      { error: 'storage_error', message: (err as Error).message },
+      { status: 500 },
+    );
+  }
+}
