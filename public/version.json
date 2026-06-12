@@ -1,13 +1,30 @@
 {
-  "version": "1.3.1",
-  "date": "2026-06-10",
-  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.3.1/NotebookCheck.exe",
-  "sha256": "D3298C7E2E2328AFCFD0E1CA390B1C10EDE3E627F577E42136A97FB0A52EA19A",
+  "version": "1.3.3",
+  "date": "2026-06-11",
+  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.3.3/NotebookCheck.exe",
+  "sha256": "F9314831CBE1E9DA987F626D1672B50F8D01993134BCD6C2C092A62FFAB8DFF2",
   "changelog": [
-    "Etapa \"Desempenho e stress\" mais clara nos modos Básico e Padrão: agora mostra um aviso explicando que o benchmark/stress só roda no modo Detalhado e que a humanização está nos modos Padrão e Detalhado (antes a tela ficava vazia, só com o título).",
-    "Painel: o modo de edição do relatório agora é uma página dedicada — ao salvar, volta automaticamente para o relatório."
+    "Detecção de Windows Autopilot refeita do zero (em beta): agora combina 4 fontes independentes — ponte WMI do MDM, dsregcmd, log de eventos do Autopilot e registro do Windows (perfil cloud-assigned, política e enrollments MDM/Intune) — e mostra um nível de confiança (Provável/Possível/Improvável) com pontuação 0-100, em vez de afirmar certeza.",
+    "O resultado do Autopilot inclui tenant detectado, vínculo com Entra ID e evidências encontradas; falsos positivos das chaves padrão do Windows e das autoridades internas foram filtrados.",
+    "Campo \"Autopilot (beta)\" de volta na aba de segurança e no relatório do painel."
   ],
   "history": [
+    {
+      "version": "1.3.2",
+      "date": "2026-06-10",
+      "changelog": [
+        "Botão \"Parar\" dos testes de desempenho agora funciona de verdade: clicar em parar (CPU, GPU, disco, VRAM, RAM ou \"Rodar todos\") cancela o teste na hora.",
+        "Teste de VRAM não derruba mais o aplicativo em placas de vídeo fortes: alocação mais conservadora e detecção de reset do driver (TDR) antes de ler a memória."
+      ]
+    },
+    {
+      "version": "1.3.1",
+      "date": "2026-06-10",
+      "changelog": [
+        "Etapa \"Desempenho e stress\" mais clara nos modos Básico e Padrão: agora mostra um aviso explicando que o benchmark/stress só roda no modo Detalhado e que a humanização está nos modos Padrão e Detalhado (antes a tela ficava vazia, só com o título).",
+        "Painel: o modo de edição do relatório agora é uma página dedicada — ao salvar, volta automaticamente para o relatório."
+      ]
+    },
     {
       "version": "1.3.0",
       "date": "2026-06-10",

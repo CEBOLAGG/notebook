@@ -248,6 +248,14 @@ export const reportsRepo = {
     return col.findOne({ test_id: testId });
   },
 
+  /** Remove um relatório definitivamente (botão "Remover" na lista). */
+  async remove(testId: string): Promise<boolean> {
+    const db = await getDb();
+    const col = db.collection<ReportDoc>(COLLECTION);
+    const r = await col.deleteOne({ test_id: testId });
+    return r.deletedCount > 0;
+  },
+
   /**
    * Atualização livre de campos do relatório (edição manual pelo técnico no
    * site). Aceita um objeto parcial e aplica via $set. Protege chaves

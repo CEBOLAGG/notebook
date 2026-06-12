@@ -8,6 +8,7 @@ interface ItemState {
   key: string;
   label: string;
   instruction: string;
+  optional?: boolean;
   done: boolean;
   status: Status;
   note: string | null;
@@ -17,8 +18,10 @@ interface StateResp {
   found: boolean;
   serial: string;
   machine: string;
+  /** total/done contam só as fotos principais; defeitos são opcionais. */
   total: number;
   done: number;
+  defects?: number;
   items: ItemState[];
 }
 
@@ -127,6 +130,10 @@ export default function InspecaoPage({
   }
 
   const evaluated = state.items.filter((i) => i.done && i.status).length;
+  // Slots de defeito são DINÂMICOS: só aparecem os já enviados + um botão
+  // "adicionar" que usa o próximo slot livre (até 5).
+  const visibleItems = state.items.filter((i) => !i.optional || i.done);
+  const nextDefect = state.items.find((i) => i.optional && !i.done);
 
   return (
     <main style={S.page}>
@@ -136,13 +143,17 @@ export default function InspecaoPage({
           {(state.machine || 'Equipamento')} • Serial {state.serial || '—'}
         </div>
         <div style={S.prog}>
-          {state.done} de {state.total} fotos • {evaluated} avaliadas
+          {state.done} de {state.total} fotos principais
+          {(state.defects ?? 0) > 0 ? ` • ${state.defects} defeito(s)` : ''} • {evaluated} avaliadas
+        </div>
+        <div style={{ fontSize: 11, color: '#9aa3b2', marginTop: 4 }}>
+          Todas as fotos são opcionais — envie as que fizerem sentido.
         </div>
         {error ? <div style={{ color: '#ff6b6b', fontSize: 12, marginTop: 6 }}>{error}</div> : null}
       </header>
 
       <div style={S.list}>
-        {state.items.map((it) => {
+        {visibleItems.map((it) => {
           const d = draft[it.key] ?? { status: it.status, note: it.note ?? '' };
           const isBusy = busy === it.key;
           // Há mudança de avaliação ainda não salva?
@@ -151,7 +162,15 @@ export default function InspecaoPage({
             <div key={it.key} style={{ ...S.card, ...(it.done ? cardTone(it.status) : {}) }}>
               <div style={S.row}>
                 <div style={{ ...S.ck, ...(it.done ? S.ckOn : {}) }}>{it.done ? '✓' : ''}</div>
-                <div style={S.lbl}>{it.label}</div>
+                <div style={S.lbl}>
+                  {it.label}
+                  {it.optional ? (
+                    <span style={{ fontSize: 10, fontWeight: 600, color: '#9aa3b2', marginLeft: 6,
+                                   border: '1px solid #3a4150', borderRadius: 999, padding: '1px 7px' }}>
+                      opcional
+                    </span>
+                  ) : null}
+                </div>
                 {it.done && it.status ? (
                   <span style={{ ...S.tag, ...(it.status === 'ok' ? S.tagOk : S.tagBad) }}>
                     {it.status === 'ok' ? 'OK' : 'Problema'}
@@ -225,6 +244,31 @@ export default function InspecaoPage({
             </div>
           );
         })}
+
+        {/* Card "adicionar defeito": aparece enquanto houver slot livre (até 5). */}
+        {nextDefect ? (
+          <div style={{ ...S.card, borderStyle: 'dashed' }}>
+            <div style={S.lbl}>📌 Encontrou um defeito?</div>
+            <div style={S.ins}>
+              Tire uma foto de cada defeito (risco, trinca, mancha, tecla...). Opcional — adicione quantas precisar (até 5).
+            </div>
+            <input
+              ref={(el) => { fileInputs.current[nextDefect.key] = el; }}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              style={{ display: 'none' }}
+              onChange={(e) => uploadPhoto(nextDefect.key, e.target.files?.[0])}
+            />
+            <button
+              style={{ ...S.btn, background: '#262c38', color: '#cdd4e0' }}
+              disabled={busy === nextDefect.key}
+              onClick={() => fileInputs.current[nextDefect.key]?.click()}
+            >
+              {busy === nextDefect.key ? 'Enviando…' : '➕ Adicionar foto de defeito'}
+            </button>
+          </div>
+        ) : null}
       </div>
 
       <footer style={S.footer}>

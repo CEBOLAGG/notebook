@@ -19,6 +19,27 @@ export async function GET(
   return NextResponse.json(rest);
 }
 
+/** Remove o relatório definitivamente (botão "Remover" na lista). */
+export async function DELETE(
+  _req: Request,
+  { params }: { params: Promise<{ testId: string }> },
+) {
+  const { testId } = await params;
+  try {
+    const removed = await reportsRepo.remove(testId);
+    if (!removed) {
+      return NextResponse.json({ error: 'not_found' }, { status: 404 });
+    }
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error('[reports.DELETE]', err);
+    return NextResponse.json(
+      { error: 'storage_error', message: (err as Error).message },
+      { status: 500 },
+    );
+  }
+}
+
 /**
  * Edição manual do relatório pelo técnico no site. Recebe um objeto parcial
  * (campos a alterar) e aplica via $set. Ex.: { "machine.ntb_code": "NTB-9",

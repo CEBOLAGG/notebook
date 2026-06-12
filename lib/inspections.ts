@@ -1,5 +1,5 @@
 import { getDb } from './mongo';
-import { INSPECTION_ITEMS } from './inspection-items';
+import { INSPECTION_ITEMS, MAIN_INSPECTION_ITEMS } from './inspection-items';
 
 /**
  * Documento de inspeção física fotográfica. Cada checklist em andamento no app
@@ -118,12 +118,15 @@ export const inspectionsRepo = {
     found: boolean;
     serial: string;
     machine: string;
+    /** Total e done contam só as 4 fotos principais; defeitos são opcionais. */
     total: number;
     done: number;
+    defects: number;
     items: {
       key: string;
       label: string;
       instruction: string;
+      optional: boolean;
       done: boolean;
       status: InspectionStatus;
       note: string | null;
@@ -131,18 +134,22 @@ export const inspectionsRepo = {
   }> {
     const doc = await this.get(slug);
     const byKey = new Map((doc?.photos ?? []).map((p) => [p.item_key, p]));
+    const mainDone = MAIN_INSPECTION_ITEMS.filter((i) => byKey.has(i.key)).length;
+    const defects = INSPECTION_ITEMS.filter((i) => i.optional && byKey.has(i.key)).length;
     return {
       found: !!doc,
       serial: doc?.serial ?? '',
       machine: doc?.machine ?? '',
-      total: INSPECTION_ITEMS.length,
-      done: byKey.size,
+      total: MAIN_INSPECTION_ITEMS.length,
+      done: mainDone,
+      defects,
       items: INSPECTION_ITEMS.map((i) => {
         const p = byKey.get(i.key);
         return {
           key: i.key,
           label: i.label,
           instruction: i.instruction,
+          optional: !!i.optional,
           done: !!p,
           status: p?.status ?? null,
           note: p?.note ?? null,

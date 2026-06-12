@@ -37,6 +37,8 @@ export interface MachinePayload {
   tpm_version?: string | null;
   secure_boot: string;
   autopilot: string;
+  /** Detalhe do checker de Autopilot (confiança, pontuação, tenant). */
+  autopilot_detail?: string | null;
   windows_activation: string;
   screen_resolution: string;
   graphics_adapter?: string | null;
@@ -48,6 +50,32 @@ export interface MachinePayload {
   location: string;
   keyboard_backlight: string;
   has_numeric_keypad?: boolean | null;
+  // Detalhes de CPU / RAM / GPU (v1.3.4+).
+  cpu_cores?: number | null;
+  cpu_threads?: number | null;
+  cpu_max_clock_mhz?: number | null;
+  ram_type?: string | null;
+  ram_speed_mhz?: number | null;
+  ram_slots_used?: number | null;
+  ram_slots_total?: number | null;
+  ram_modules?: MemoryModulePayload[] | null;
+  gpus?: GpuPayload[] | null;
+}
+
+export interface MemoryModulePayload {
+  locator?: string | null;
+  capacity_gb?: number | null;
+  speed_mhz?: number | null;
+  manufacturer?: string | null;
+  part_number?: string | null;
+  type?: string | null;
+}
+
+export interface GpuPayload {
+  name: string;
+  vram_mb?: number | null;
+  driver_version?: string | null;
+  driver_date?: string | null;
 }
 
 export interface StoragePayload {

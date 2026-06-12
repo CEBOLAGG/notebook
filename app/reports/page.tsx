@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Shell } from '@/components/Shell';
 import { ClassificationBadge } from '@/components/StatusBadge';
+import { DeleteReportButton } from '@/components/DeleteReportButton';
 import { reportsRepo } from '@/lib/repository';
 import { formatDate } from '@/lib/format';
 
@@ -123,12 +124,15 @@ export default async function ReportsListPage({ searchParams }: PageProps) {
                     <ClassificationBadge value={r.final_classification} />
                   </td>
                   <td className="px-5 py-3 text-right">
-                    <Link
-                      href={`/reports/${r.test_id}`}
-                      className="text-brand-600 hover:underline dark:text-brand-400"
-                    >
-                      Abrir
-                    </Link>
+                    <div className="flex items-center justify-end gap-4">
+                      <Link
+                        href={`/reports/${r.test_id}`}
+                        className="text-brand-600 hover:underline dark:text-brand-400"
+                      >
+                        Abrir
+                      </Link>
+                      <DeleteReportButton testId={r.test_id} label={r.ntb_code || undefined} />
+                    </div>
                   </td>
                 </tr>
               ))}

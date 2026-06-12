@@ -4,13 +4,13 @@ import { Shell } from '@/components/Shell';
 import { Badge, ClassificationBadge, StatusBadge } from '@/components/StatusBadge';
 import { CommentForm } from '@/components/CommentForm';
 import { reportsRepo } from '@/lib/repository';
-import { INSPECTION_ITEMS } from '@/lib/inspection-items';
+import { INSPECTION_ITEMS, LEGACY_INSPECTION_LABELS } from '@/lib/inspection-items';
 import {
   formatDate,
-  formatGb,
   labelTest,
   statusToTone,
 } from '@/lib/format';
+import type { ReportDoc } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -42,7 +42,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
 
   // Conjunto de testes automáticos esperados; os ausentes em report.tests
   // são considerados "não realizados".
-  const EXPECTED_TESTS = ['ram', 'bateria', 'carregador', 'hdmi', 'wifi', 'bluetooth', 'internet', 'audio', 'microfone', 'webcam', 'teclado', 'touchpad', 'tela_pixels', 'stress'];
+  const EXPECTED_TESTS = ['bateria', 'carregador', 'wifi', 'bluetooth', 'internet', 'usb', 'taxa_atualizacao', 'biometria', 'leitor_cartao', 'hdmi', 'audio', 'microfone', 'camera', 'tela', 'teclado', 'touchpad', 'stress'];
   const doneKeys = new Set(Object.keys(report.tests ?? {}));
   const untestedTests = EXPECTED_TESTS.filter((k) => !doneKeys.has(k));
 
@@ -74,21 +74,17 @@ export default async function ReportDetailPage({ params }: PageProps) {
             <Field label="Modelo" value={m.model || '—'} />
             <Field label="Serial" value={m.serial || '—'} mono />
             <Field label="Hostname" value={m.hostname} />
-            <Field label="CPU" value={m.cpu || '—'} />
-            <Field label="RAM" value={formatGb(m.ram_gb)} />
+            <Field label="CPU" value={formatCpu(m)} />
+            <Field label="RAM" value={formatRam(m)} />
             <Field label="SO" value={`${m.os} ${m.os_version}`} />
             <Field label="Resolução" value={m.screen_resolution} />
             <Field
               label={
-                m.graphics_adapters && m.graphics_adapters.length > 1
-                  ? `Adaptadores gráficos (${m.graphics_adapters.length})`
-                  : 'Adaptador gráfico'
+                (m.gpus && m.gpus.length > 1) || (m.graphics_adapters && m.graphics_adapters.length > 1)
+                  ? 'Placas de vídeo'
+                  : 'Placa de vídeo'
               }
-              value={
-                m.graphics_adapters && m.graphics_adapters.length > 0
-                  ? m.graphics_adapters.join(' • ')
-                  : (m.graphics_adapter || '—')
-              }
+              value={formatGpus(m)}
             />
             <Field label="MAC" value={m.mac_address || '—'} mono />
             <Field
@@ -101,7 +97,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
             />
             <Field label="TPM" value={`${m.tpm}${m.tpm_version ? ` (${m.tpm_version})` : ''}`} />
             <Field label="Secure Boot" value={m.secure_boot} />
-            <Field label="Autopilot" value={m.autopilot} />
+            <Field label="Autopilot" value={m.autopilot_detail ? `${m.autopilot} — ${m.autopilot_detail}` : m.autopilot} />
             <Field label="Ativação" value={m.windows_activation} />
             <Field label="Teclado retroiluminado" value={m.keyboard_backlight} />
             <Field label="Teclado numérico" value={m.has_numeric_keypad == null ? '—' : (m.has_numeric_keypad ? 'Sim' : 'Não')} />
@@ -134,38 +130,38 @@ export default async function ReportDetailPage({ params }: PageProps) {
 
       <section className="mt-8">
         <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">Testes automáticos</h2>
-        <div className="card divide-y divide-ink-100 dark:divide-ink-700">
-          {Object.entries(report.tests).length === 0 ? (
-            <div className="p-6 text-sm text-ink-500 dark:text-ink-400">
-              Nenhum teste automático registrado.
-            </div>
-          ) : (
-            Object.entries(report.tests).map(([key, t]) => {
+        {Object.entries(report.tests).length === 0 ? (
+          <div className="card p-6 text-sm text-ink-500 dark:text-ink-400">
+            Nenhum teste automático registrado.
+          </div>
+        ) : (
+          // Layout COMPACTO (o painel também serve de estoque): grid de 2
+          // colunas com linhas densas — badge + nome + detalhe curto.
+          // Comentários ficam recolhidos atrás do link "Comentar".
+          <div className="grid gap-2 md:grid-cols-2">
+            {Object.entries(report.tests).map(([key, t]) => {
               const tone = statusToTone(t.status);
               const needsComment = tone !== 'ok';
+              const comments = commentsByKey.get(key) ?? [];
               return (
-                <article key={key} className="p-5">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-semibold text-ink-900 dark:text-white">
-                          {labelTest(key)}
-                        </h3>
-                        <StatusBadge status={t.status} />
-                      </div>
-                      <p className="mt-1 text-sm text-ink-700 dark:text-ink-200">
-                        {t.details || '—'}
-                      </p>
-                      <p className="mt-1 text-xs text-ink-500 dark:text-ink-400">
-                        Executado em {formatDate(t.executed_at)}
-                      </p>
-                    </div>
+                <article key={key} className="card px-4 py-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="truncate text-sm font-semibold text-ink-900 dark:text-white">
+                      {labelTest(key)}
+                    </h3>
+                    <StatusBadge status={t.status} />
                   </div>
-                  <CommentList comments={commentsByKey.get(key) ?? []} />
+                  {t.details ? (
+                    <p className="mt-1 text-xs leading-snug text-ink-600 dark:text-ink-300">
+                      {t.details}
+                    </p>
+                  ) : null}
+                  <CommentList comments={comments} />
                   <CommentForm
                     testId={report.test_id}
                     testKey={key}
-                    open={needsComment && (commentsByKey.get(key)?.length ?? 0) === 0}
+                    compact
+                    open={false}
                     placeholder={
                       needsComment
                         ? 'Comente o motivo da falha ou de não ter sido testado'
@@ -174,9 +170,9 @@ export default async function ReportDetailPage({ params }: PageProps) {
                   />
                 </article>
               );
-            })
-          )}
-        </div>
+            })}
+          </div>
+        )}
       </section>
 
       {report.stress ? (
@@ -231,17 +227,27 @@ export default async function ReportDetailPage({ params }: PageProps) {
 
       {(() => {
         // Inspeção física UNIFICADA: uma única seção com a foto, a avaliação do
-        // técnico (OK / Com problema, definida no celular) e o comentário. Itens
-        // do catálogo sem foto aparecem como "Não realizado". O status e o
-        // comentário são editáveis no modo de edição do relatório.
+        // técnico (OK / Com problema, definida no celular) e o comentário.
+        // Itens PRINCIPAIS aparecem sempre (com "Sem foto" quando não enviada —
+        // fotos são opcionais); slots de DEFEITO só aparecem quando enviados;
+        // chaves legadas (catálogo antigo) continuam visíveis com a foto salva.
         const photos = report.inspection_photos ?? [];
         const photoByKey = new Map(photos.map((p) => [p.item_key, p]));
-        if (INSPECTION_ITEMS.length === 0) return null;
+        const catalogKeys = new Set(INSPECTION_ITEMS.map((i) => i.key));
+        const legacy = photos.filter((p) => !catalogKeys.has(p.item_key));
+        const visibleItems = INSPECTION_ITEMS
+          .filter((def) => !def.optional || photoByKey.has(def.key))
+          .map((def) => ({ key: def.key, label: def.label }))
+          .concat(legacy.map((p) => ({
+            key: p.item_key,
+            label: LEGACY_INSPECTION_LABELS[p.item_key] ?? p.item_key,
+          })));
+        if (visibleItems.length === 0) return null;
         return (
           <section className="mt-8">
             <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">Inspeção física</h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {INSPECTION_ITEMS.map((def) => {
+              {visibleItems.map((def) => {
                 const p = photoByKey.get(def.key);
                 const status = p?.status ?? null;
                 const extraComments = commentsByKey.get(def.key) ?? [];
@@ -265,7 +271,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
                           {def.label}
                         </span>
                         {!p ? (
-                          <Badge text="Não realizado" tone="mute" />
+                          <Badge text="Sem foto" tone="mute" />
                         ) : status === 'problema' ? (
                           <Badge text="Com problema" tone="bad" />
                         ) : status === 'ok' ? (
@@ -307,6 +313,45 @@ export default async function ReportDetailPage({ params }: PageProps) {
       </section>
     </Shell>
   );
+}
+
+function formatCpu(m: ReportDoc['machine']): string {
+  const base = m.cpu || '—';
+  const extra: string[] = [];
+  if (m.cpu_cores) extra.push(`${m.cpu_cores} núcleos`);
+  if (m.cpu_threads) extra.push(`${m.cpu_threads} threads`);
+  if (m.cpu_max_clock_mhz) extra.push(`${(m.cpu_max_clock_mhz / 1000).toFixed(1)} GHz`);
+  return extra.length > 0 ? `${base} (${extra.join(' • ')})` : base;
+}
+
+function formatRam(m: ReportDoc['machine']): string {
+  // Total: soma dos pentes (mais preciso) ou o ram_gb do WMI.
+  const sum = (m.ram_modules ?? []).reduce((acc, mod) => acc + (mod.capacity_gb ?? 0), 0);
+  const total = sum > 0 ? sum : m.ram_gb;
+  let text = `${total.toFixed(1)} GB`;
+  const extra: string[] = [];
+  if (m.ram_type) extra.push(m.ram_type);
+  if (m.ram_speed_mhz) extra.push(`${m.ram_speed_mhz} MHz`);
+  if (m.ram_slots_used) {
+    extra.push(m.ram_slots_total ? `${m.ram_slots_used}/${m.ram_slots_total} slots` : `${m.ram_slots_used} pente(s)`);
+  }
+  if (extra.length > 0) text += ` • ${extra.join(' • ')}`;
+  return text;
+}
+
+function formatGpus(m: ReportDoc['machine']): string {
+  if (m.gpus && m.gpus.length > 0) {
+    return m.gpus
+      .map((g) => {
+        const parts: string[] = [];
+        if (g.vram_mb) parts.push(g.vram_mb >= 1024 ? `${(g.vram_mb / 1024).toFixed(1)} GB` : `${g.vram_mb} MB`);
+        if (g.driver_version) parts.push(`driver ${g.driver_version}`);
+        return parts.length > 0 ? `${g.name} (${parts.join(' • ')})` : g.name;
+      })
+      .join(' • ');
+  }
+  if (m.graphics_adapters && m.graphics_adapters.length > 0) return m.graphics_adapters.join(' • ');
+  return m.graphics_adapter || '—';
 }
 
 function Field({
