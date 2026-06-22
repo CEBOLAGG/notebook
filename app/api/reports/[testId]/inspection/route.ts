@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { reportsRepo } from '@/lib/repository';
+import { requirePanelOrIngest } from '@/lib/panel-auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -13,6 +14,8 @@ export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ testId: string }> },
 ) {
+  const blocked = await requirePanelOrIngest(req);
+  if (blocked) return blocked;
   const { testId } = await params;
   let body: { evals?: { item_key?: string; status?: string | null; note?: string | null }[] };
   try {
@@ -54,6 +57,8 @@ export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ testId: string }> },
 ) {
+  const blocked = await requirePanelOrIngest(req);
+  if (blocked) return blocked;
   const { testId } = await params;
   let body: { item_key?: string };
   try {

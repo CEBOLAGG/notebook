@@ -112,6 +112,8 @@ export interface TestEntry {
   status: string;
   details: string;
   executed_at: string;
+  /** Comentário do técnico digitado no app (botão "+"). */
+  comment?: string | null;
 }
 
 export interface ManualChecklistPayload {

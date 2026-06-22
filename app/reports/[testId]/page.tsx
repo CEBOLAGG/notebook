@@ -171,6 +171,12 @@ export default async function ReportDetailPage({ params }: PageProps) {
                       {t.details}
                     </p>
                   ) : null}
+                  {t.comment ? (
+                    <p className="mt-1.5 rounded bg-ink-100/60 px-2 py-1 text-xs text-ink-700 dark:bg-white/5 dark:text-ink-200">
+                      <span className="label mr-1 align-middle">Téc.</span>
+                      {t.comment}
+                    </p>
+                  ) : null}
                   <CommentList comments={comments} />
                   <CommentForm
                     testId={report.test_id}

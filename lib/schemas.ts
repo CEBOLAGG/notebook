@@ -56,6 +56,7 @@ export const testEntrySchema = z.object({
   status: z.string(),
   details: z.string(),
   executed_at: isoString,
+  comment: z.string().nullable().optional(),
 });
 
 export const manualChecklistSchema = z.object({

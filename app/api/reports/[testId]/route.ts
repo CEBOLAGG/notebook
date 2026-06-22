@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { reportsRepo } from '@/lib/repository';
+import { requirePanelOrIngest } from '@/lib/panel-auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -21,9 +22,11 @@ export async function GET(
 
 /** Remove o relatório definitivamente (botão "Remover" na lista). */
 export async function DELETE(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ testId: string }> },
 ) {
+  const blocked = await requirePanelOrIngest(req);
+  if (blocked) return blocked;
   const { testId } = await params;
   try {
     const removed = await reportsRepo.remove(testId);
@@ -49,6 +52,8 @@ export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ testId: string }> },
 ) {
+  const blocked = await requirePanelOrIngest(req);
+  if (blocked) return blocked;
   const { testId } = await params;
   let patch: Record<string, unknown>;
   try {

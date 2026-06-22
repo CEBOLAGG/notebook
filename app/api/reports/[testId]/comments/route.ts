@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { reportsRepo } from '@/lib/repository';
 import { commentSchema } from '@/lib/schemas';
+import { requirePanelOrIngest } from '@/lib/panel-auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -9,6 +10,8 @@ export async function POST(
   req: Request,
   { params }: { params: Promise<{ testId: string }> },
 ) {
+  const blocked = await requirePanelOrIngest(req);
+  if (blocked) return blocked;
   const { testId } = await params;
   let body: unknown;
   try {
