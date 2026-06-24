@@ -1,20 +1,35 @@
 {
-  "version": "1.5.0",
-  "date": "2026-06-12",
-  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.5.0/NotebookCheck.exe",
-  "sha256": "08017A096A8067CADFA6FDC0939071715FB1F163580F749FABDA0296BFBFF502",
+  "version": "1.6.0",
+  "date": "2026-06-22",
+  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.6.0/NotebookCheck.exe",
+  "sha256": "34B542C6F210BDFF36A13DF6945AF91DEE06885FCCE3A653B1077E0AAF3E1159",
   "changelog": [
-    "Reteste reformulado: mostra as falhas do relatório anterior e deixa escolher entre retestar só as falhas (2x cada) ou refazer o checklist completo sobrescrevendo o antigo",
-    "Refazer por cima preserva os dados antigos (stress, testes não re-executados, checklist manual, observações) e pré-preenche NTB, localização e técnico",
-    "Problemas da inspeção física (fotos com defeito) aparecem no plano do reteste",
-    "Resultados dos testes em grade de 2 colunas com posição fixa (não trocam mais de lugar ao rodar)",
-    "Teste de teclado: numpad incluído e seleção de layout (ABNT2/US) por dropdown dentro da janela",
-    "Teclado e touchpad de volta aos testes do técnico; teste de tom 1 kHz removido (estéreo L/R cobre)",
-    "Testes do técnico só entram na grade quando executados — os pulados são acusados no painel",
-    "Ícones profissionais nas portas (ícones nativos do Windows no lugar de emojis)",
-    "Correções: resultados de testes manuais sumiam ao navegar entre etapas; era possível concluir sem enviar o relatório; status Atenção/Não testado apareciam vazios na grade"
+    "Agora chamado Notelet — nova marca nas janelas do app e no atualizador",
+    "Testes num modal único: o teste roda dentro dele (estéreo, microfone com medidor de nível ao vivo e brilho) com resultado, comentário e salvar no mesmo lugar — sem abrir uma segunda janela",
+    "Câmera, pixels, teclado e touchpad abrem a partir do mesmo modal e já trazem o resultado de volta para confirmação",
+    "Botão + em cada teste para anexar um comentário do técnico, que passa a aparecer no relatório do site",
+    "Resultado de qualquer teste editável por seleção (OK, Atenção, Falha, Não testado, Não aplicável)",
+    "Relatórios à prova de pendrive: se o pendrive sair, travar ou trocar de letra, o relatório é salvo automaticamente numa pasta local em vez de se perder",
+    "Correção do CrystalDiskInfo na parte de disco (erro 'graph.html não encontrado'): extração agora é versionada e íntegra",
+    "Teste de brilho ganhou a opção Não aplicável; confirmação do teste de pixels sem pop-up",
+    "Correções: campo de comentário do teclado não aceitava digitação e posição do botão Rodar todos"
   ],
   "history": [
+    {
+      "version": "1.5.0",
+      "date": "2026-06-12",
+      "changelog": [
+        "Reteste reformulado: mostra as falhas do relatório anterior e deixa escolher entre retestar só as falhas (2x cada) ou refazer o checklist completo sobrescrevendo o antigo",
+        "Refazer por cima preserva os dados antigos (stress, testes não re-executados, checklist manual, observações) e pré-preenche NTB, localização e técnico",
+        "Problemas da inspeção física (fotos com defeito) aparecem no plano do reteste",
+        "Resultados dos testes em grade de 2 colunas com posição fixa (não trocam mais de lugar ao rodar)",
+        "Teste de teclado: numpad incluído e seleção de layout (ABNT2/US) por dropdown dentro da janela",
+        "Teclado e touchpad de volta aos testes do técnico; teste de tom 1 kHz removido (estéreo L/R cobre)",
+        "Testes do técnico só entram na grade quando executados — os pulados são acusados no painel",
+        "Ícones profissionais nas portas (ícones nativos do Windows no lugar de emojis)",
+        "Correções: resultados de testes manuais sumiam ao navegar entre etapas; era possível concluir sem enviar o relatório; status Atenção/Não testado apareciam vazios na grade"
+      ]
+    },
     {
       "version": "1.4.0",
       "date": "2026-06-12",
