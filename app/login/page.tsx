@@ -14,8 +14,9 @@ export default async function LoginPage({
     <main className="grid min-h-dvh place-items-center p-6">
       <div className="card w-full max-w-sm p-7">
         <div className="mb-5 flex items-center gap-2.5">
-          <span className="grid h-9 w-9 place-items-center rounded-md bg-ink-900 font-mono text-sm font-semibold text-white dark:bg-brand-600">
-            N
+          <span className="flex h-9 items-center rounded-md bg-ink-900 px-2 dark:bg-brand-600">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="Notelet" className="h-4 w-auto" />
           </span>
           <div className="leading-tight">
             <div className="text-sm font-semibold tracking-tight text-ink-900 dark:text-white">Notelet</div>

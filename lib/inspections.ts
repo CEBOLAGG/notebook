@@ -1,5 +1,5 @@
 import { getDb } from './mongo';
-import { INSPECTION_ITEMS, MAIN_INSPECTION_ITEMS } from './inspection-items';
+import { catalogFor, mainItemsFor, type InspectionKind } from './inspection-items';
 
 /**
  * Documento de inspeção física fotográfica. Cada checklist em andamento no app
@@ -24,6 +24,8 @@ export interface InspectionDoc {
   slug: string;
   serial: string;
   machine: string;
+  /** Tipo de equipamento — define o catálogo de fotos ('notebook' | 'desktop'). */
+  kind?: InspectionKind;
   created_at: string;
   updated_at: string;
   photos: InspectionPhotoDoc[];
@@ -44,16 +46,25 @@ export const inspectionsRepo = {
   },
 
   /** Cria a sessão de inspeção se ainda não existir. */
-  async ensure(slug: string, serial: string, machine: string): Promise<InspectionDoc> {
+  async ensure(slug: string, serial: string, machine: string, kind?: InspectionKind): Promise<InspectionDoc> {
     const db = await getDb();
     const col = db.collection<InspectionDoc>(COLLECTION);
     const now = new Date().toISOString();
     const existing = await col.findOne({ slug });
-    if (existing) return existing;
+    if (existing) {
+      // Sessão já existe mas ainda sem 'kind' (app antigo) e agora veio um:
+      // grava para o celular passar a usar o catálogo certo.
+      if (kind && !existing.kind) {
+        await col.updateOne({ slug }, { $set: { kind } });
+        existing.kind = kind;
+      }
+      return existing;
+    }
     const doc: InspectionDoc = {
       slug,
       serial: serial || '',
       machine: machine || '',
+      kind: kind ?? 'notebook',
       created_at: now,
       updated_at: now,
       photos: [],
@@ -133,17 +144,19 @@ export const inspectionsRepo = {
     }[];
   }> {
     const doc = await this.get(slug);
+    const catalog = catalogFor(doc?.kind);
+    const main = mainItemsFor(doc?.kind);
     const byKey = new Map((doc?.photos ?? []).map((p) => [p.item_key, p]));
-    const mainDone = MAIN_INSPECTION_ITEMS.filter((i) => byKey.has(i.key)).length;
-    const defects = INSPECTION_ITEMS.filter((i) => i.optional && byKey.has(i.key)).length;
+    const mainDone = main.filter((i) => byKey.has(i.key)).length;
+    const defects = catalog.filter((i) => i.optional && byKey.has(i.key)).length;
     return {
       found: !!doc,
       serial: doc?.serial ?? '',
       machine: doc?.machine ?? '',
-      total: MAIN_INSPECTION_ITEMS.length,
+      total: main.length,
       done: mainDone,
       defects,
-      items: INSPECTION_ITEMS.map((i) => {
+      items: catalog.map((i) => {
         const p = byKey.get(i.key);
         return {
           key: i.key,

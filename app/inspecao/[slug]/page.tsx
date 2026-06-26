@@ -30,7 +30,7 @@ export default function InspecaoPage({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ serial?: string; machine?: string }>;
+  searchParams: Promise<{ serial?: string; machine?: string; kind?: string }>;
 }) {
   const { slug } = use(params);
   const sp = use(searchParams);
@@ -47,6 +47,7 @@ export default function InspecaoPage({
       const qs = new URLSearchParams();
       if (sp.serial) qs.set('serial', sp.serial);
       if (sp.machine) qs.set('machine', sp.machine);
+      if (sp.kind) qs.set('kind', sp.kind);
       const r = await fetch(`/api/inspecao/${slug}?${qs.toString()}`, { cache: 'no-store' });
       const data: StateResp = await r.json();
       setState(data);
@@ -64,7 +65,7 @@ export default function InspecaoPage({
     } catch {
       setError('Sem conexão. Verifique a internet do celular.');
     }
-  }, [slug, sp.serial, sp.machine]);
+  }, [slug, sp.serial, sp.machine, sp.kind]);
 
   useEffect(() => {
     load();

@@ -6,7 +6,7 @@ import { CommentForm } from '@/components/CommentForm';
 import { DeleteReportButton } from '@/components/DeleteReportButton';
 import { Icon } from '@/components/Icon';
 import { reportsRepo } from '@/lib/repository';
-import { INSPECTION_ITEMS, LEGACY_INSPECTION_LABELS } from '@/lib/inspection-items';
+import { catalogFor, LEGACY_INSPECTION_LABELS } from '@/lib/inspection-items';
 import {
   formatDate,
   labelTest,
@@ -48,7 +48,10 @@ export default async function ReportDetailPage({ params }: PageProps) {
   // Os testes do técnico (estéreo, microfone, câmera, tela, brilho, teclado,
   // touchpad, descarga, throttling) só aparecem no app quando executados; os
   // pulados são acusados aqui como "não realizados".
-  const EXPECTED_TESTS = ['bateria', 'carregador', 'wifi', 'bluetooth', 'internet', 'usb', 'taxa_atualizacao', 'biometria', 'leitor_cartao', 'hdmi', 'estereo', 'microfone', 'camera', 'tela', 'brilho', 'teclado', 'touchpad', 'descarga_bateria', 'throttling', 'stress'];
+  // Testes esperados por tipo: o Desktop roda bem menos (só som, internet e USB).
+  const EXPECTED_TESTS = report.checklist_mode === 'desktop'
+    ? ['internet', 'usb', 'estereo']
+    : ['bateria', 'carregador', 'wifi', 'bluetooth', 'internet', 'usb', 'taxa_atualizacao', 'biometria', 'leitor_cartao', 'hdmi', 'estereo', 'microfone', 'camera', 'tela', 'brilho', 'teclado', 'touchpad', 'throttling', 'stress'];
   const doneKeys = new Set(Object.keys(report.tests ?? {}));
   const untestedTests = EXPECTED_TESTS.filter((k) => !doneKeys.has(k));
 
@@ -254,9 +257,11 @@ export default async function ReportDetailPage({ params }: PageProps) {
         // chaves legadas (catálogo antigo) continuam visíveis com a foto salva.
         const photos = report.inspection_photos ?? [];
         const photoByKey = new Map(photos.map((p) => [p.item_key, p]));
-        const catalogKeys = new Set(INSPECTION_ITEMS.map((i) => i.key));
+        // Catálogo conforme o tipo do equipamento (desktop usa fotos de carcaça/interna).
+        const catalog = catalogFor(report.checklist_mode === 'desktop' ? 'desktop' : 'notebook');
+        const catalogKeys = new Set(catalog.map((i) => i.key));
         const legacy = photos.filter((p) => !catalogKeys.has(p.item_key));
-        const visibleItems = INSPECTION_ITEMS
+        const visibleItems = catalog
           .filter((def) => !def.optional || photoByKey.has(def.key))
           .map((def) => ({ key: def.key, label: def.label }))
           .concat(legacy.map((p) => ({

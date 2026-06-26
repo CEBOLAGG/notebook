@@ -17,12 +17,13 @@ export async function GET(
   const url = new URL(req.url);
   const serial = url.searchParams.get('serial') ?? '';
   const machine = url.searchParams.get('machine') ?? '';
+  const kind = url.searchParams.get('kind') === 'desktop' ? 'desktop' : 'notebook';
 
   try {
     await inspectionsRepo.ensureIndexes();
-    // Garante a sessão (cria se for o primeiro acesso, com serial/machine da URL).
+    // Garante a sessão (cria se for o primeiro acesso, com serial/machine/kind da URL).
     if (serial || machine) {
-      await inspectionsRepo.ensure(slug, serial, machine);
+      await inspectionsRepo.ensure(slug, serial, machine, kind);
     }
     const state = await inspectionsRepo.state(slug);
     return NextResponse.json(state);

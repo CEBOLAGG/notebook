@@ -1,20 +1,40 @@
 {
-  "version": "1.6.0",
-  "date": "2026-06-22",
-  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.6.0/NotebookCheck.exe",
-  "sha256": "34B542C6F210BDFF36A13DF6945AF91DEE06885FCCE3A653B1077E0AAF3E1159",
+  "version": "1.7.1",
+  "date": "2026-06-26",
+  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.7.1/NotebookCheck.exe",
+  "sha256": "39FAB60E1E5C32773D69B8D76DF38505D0AA18F188D999518D6604C3B6F50ACB",
   "changelog": [
-    "Agora chamado Notelet — nova marca nas janelas do app e no atualizador",
-    "Testes num modal único: o teste roda dentro dele (estéreo, microfone com medidor de nível ao vivo e brilho) com resultado, comentário e salvar no mesmo lugar — sem abrir uma segunda janela",
-    "Câmera, pixels, teclado e touchpad abrem a partir do mesmo modal e já trazem o resultado de volta para confirmação",
-    "Botão + em cada teste para anexar um comentário do técnico, que passa a aparecer no relatório do site",
-    "Resultado de qualquer teste editável por seleção (OK, Atenção, Falha, Não testado, Não aplicável)",
-    "Relatórios à prova de pendrive: se o pendrive sair, travar ou trocar de letra, o relatório é salvo automaticamente numa pasta local em vez de se perder",
-    "Correção do CrystalDiskInfo na parte de disco (erro 'graph.html não encontrado'): extração agora é versionada e íntegra",
-    "Teste de brilho ganhou a opção Não aplicável; confirmação do teste de pixels sem pop-up",
-    "Correções: campo de comentário do teclado não aceitava digitação e posição do botão Rodar todos"
+    "Logo do Notelet no ícone do app e nas barras de título das janelas",
+    "Campos do cadastro com textos de exemplo (custos: \"frete, etc..\", acessórios, defeitos)",
+    "Revisão do cadastro destaca em evidência o que ainda falta preencher"
   ],
   "history": [
+    {
+      "version": "1.7.0",
+      "date": "2026-06-26",
+      "changelog": [
+        "Novo modo Desktop: sem bateria — som, internet e USB, com inspeção da carcaça + interna",
+        "Benchmark e humanização liberados nas etapas de Desempenho (Padrão e Detalhado)",
+        "Removido o teste de descarga de bateria",
+        "Novo modo \"Cadastro no estoque (ERP)\": registra a máquina no estoque em 5 etapas (origem, identificação, condição, destino, revisão)",
+        "NTB preenchido automaticamente pelo número de série e padronizado para NTB123"
+      ]
+    },
+    {
+      "version": "1.6.0",
+      "date": "2026-06-22",
+      "changelog": [
+        "Agora chamado Notelet — nova marca nas janelas do app e no atualizador",
+        "Testes num modal único: o teste roda dentro dele (estéreo, microfone com medidor de nível ao vivo e brilho) com resultado, comentário e salvar no mesmo lugar — sem abrir uma segunda janela",
+        "Câmera, pixels, teclado e touchpad abrem a partir do mesmo modal e já trazem o resultado de volta para confirmação",
+        "Botão + em cada teste para anexar um comentário do técnico, que passa a aparecer no relatório do site",
+        "Resultado de qualquer teste editável por seleção (OK, Atenção, Falha, Não testado, Não aplicável)",
+        "Relatórios à prova de pendrive: se o pendrive sair, travar ou trocar de letra, o relatório é salvo automaticamente numa pasta local em vez de se perder",
+        "Correção do CrystalDiskInfo na parte de disco (erro 'graph.html não encontrado'): extração agora é versionada e íntegra",
+        "Teste de brilho ganhou a opção Não aplicável; confirmação do teste de pixels sem pop-up",
+        "Correções: campo de comentário do teclado não aceitava digitação e posição do botão Rodar todos"
+      ]
+    },
     {
       "version": "1.5.0",
       "date": "2026-06-12",
