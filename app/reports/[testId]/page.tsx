@@ -9,10 +9,11 @@ import { reportsRepo } from '@/lib/repository';
 import { catalogFor, LEGACY_INSPECTION_LABELS } from '@/lib/inspection-items';
 import {
   formatDate,
+  formatGb,
   labelTest,
   statusToTone,
 } from '@/lib/format';
-import type { ReportDoc } from '@/lib/types';
+import type { ReportDoc, StoragePayload } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -145,6 +146,17 @@ export default async function ReportDetailPage({ params }: PageProps) {
           ) : null}
         </div>
       </section>
+
+      {report.storage && report.storage.length > 0 ? (
+        <section className="mt-8">
+          <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">Armazenamento</h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {report.storage.map((s) => (
+              <StorageCard key={s.index} disk={s} />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="mt-8">
         <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">Testes automáticos</h2>
@@ -407,6 +419,78 @@ function formatGpus(m: ReportDoc['machine']): string {
   }
   if (m.graphics_adapters && m.graphics_adapters.length > 0) return m.graphics_adapters.join(' • ');
   return m.graphics_adapter || '—';
+}
+
+/** Traduz o enum StorageType (C#) para um rótulo amigável. */
+function formatStorageType(type: string): string {
+  switch (type) {
+    case 'HDD': return 'HDD';
+    case 'SSD_SATA': return 'SSD (SATA)';
+    case 'SSD_NVMe': return 'SSD (NVMe)';
+    case 'Indisponivel': return 'Indisponível';
+    default: return type;
+  }
+}
+
+/**
+ * Tom do badge de SMART do disco. Vocabulário próprio (OK/Aviso/Falha/
+ * Indisponivel, vindo do enum SmartStatus em C#) — diferente do vocabulário
+ * dos testes automáticos (OK/Atenção/Falha/...), por isso não reaproveita
+ * statusToTone.
+ */
+function storageSmartTone(status: string): 'ok' | 'warn' | 'bad' | 'mute' {
+  switch (status) {
+    case 'OK': return 'ok';
+    case 'Aviso': return 'warn';
+    case 'Falha': return 'bad';
+    default: return 'mute';
+  }
+}
+
+/** Card com os detalhes de um disco (capacidade, saúde, uso e dados do CrystalDiskInfo). */
+function StorageCard({ disk: s }: { disk: StoragePayload }) {
+  return (
+    <div className="card p-5">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h3 className="truncate text-sm font-semibold text-ink-900 dark:text-white">
+          {s.model || `Disco #${s.index}`}
+        </h3>
+        <Badge text={s.smart_status} tone={storageSmartTone(s.smart_status)} />
+      </div>
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+        <Field label="Capacidade" value={formatGb(s.capacity_gb)} />
+        <Field label="Tipo" value={formatStorageType(s.type)} />
+        {s.health_label ? <Field label="Saúde (CDI)" value={s.health_label} /> : null}
+        {s.life_percent_remaining != null ? (
+          <Field label="Vida útil" value={`${s.life_percent_remaining}%`} />
+        ) : null}
+        {s.temperature_c != null && s.temperature_c > 0 ? (
+          <Field label="Temperatura" value={`${s.temperature_c}°C`} />
+        ) : null}
+        {s.power_on_hours != null && s.power_on_hours > 0 ? (
+          <Field label="Horas ligado" value={`${s.power_on_hours.toLocaleString('pt-BR')} h`} />
+        ) : null}
+        {s.power_on_count != null && s.power_on_count > 0 ? (
+          <Field label="Ciclos de energia" value={s.power_on_count.toLocaleString('pt-BR')} />
+        ) : null}
+        {s.data_written_tb != null && s.data_written_tb > 0 ? (
+          <Field label="Dados gravados" value={`${s.data_written_tb.toFixed(1)} TB`} />
+        ) : null}
+        {s.data_read_tb != null && s.data_read_tb > 0 ? (
+          <Field label="Dados lidos" value={`${s.data_read_tb.toFixed(1)} TB`} />
+        ) : null}
+        {s.interface_type ? <Field label="Interface" value={s.interface_type} /> : null}
+        {s.drive_letter ? <Field label="Unidade" value={s.drive_letter} /> : null}
+        {s.firmware ? <Field label="Firmware" value={s.firmware} /> : null}
+        {s.serial_number ? <Field label="Serial" value={s.serial_number} mono /> : null}
+      </dl>
+      {s.smart_failing_attribute ? (
+        <p className="mt-3 rounded-lg bg-amber-50 px-3 py-1.5 text-xs text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">
+          Atributo SMART em alerta: {s.smart_failing_attribute}
+        </p>
+      ) : null}
+    </div>
+  );
 }
 
 function Field({

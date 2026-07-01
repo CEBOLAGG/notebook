@@ -98,6 +98,25 @@ export interface StoragePayload {
   data_written_tb?: number | null;
   data_read_tb?: number | null;
   temperature_c?: number | null;
+  /**
+   * Campos adicionais do relatório CrystalDiskInfo (v1.x+ do app desktop).
+   * Nomes em snake_case para casar com o contrato JSON existente
+   * (ApiPayload.cs usa [JsonPropertyName] em snake_case para todo o resto
+   * do StoragePayload) — mantém consistência em vez de introduzir camelCase
+   * isolado só para estes campos.
+   */
+  /** Firmware do dispositivo (campo "Firmware" do CDI). */
+  firmware?: string | null;
+  /** Número de série do disco (campo "Serial Number" do CDI). */
+  serial_number?: string | null;
+  /** Interface física/lógica reportada pelo CDI (ex.: "NVM Express", "Serial ATA"). */
+  interface_type?: string | null;
+  /** Letra(s) de unidade associada ao disco (campo "Drive Letter" do CDI). */
+  drive_letter?: string | null;
+  /** Rótulo bruto de saúde do CDI ("Good" / "Caution" / "Bad"), antes de virar smart_status. */
+  health_label?: string | null;
+  /** Atributo SMART que motivou um estado "Aviso"/"Falha", quando reportado. */
+  smart_failing_attribute?: string | null;
 }
 
 export interface BatteryPayload {

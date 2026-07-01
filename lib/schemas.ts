@@ -28,6 +28,12 @@ export const machineSchema = z.object({
   keyboard_backlight: z.string().optional().default(''),
 }).passthrough();
 
+// passthrough: além dos campos ricos do CrystalDiskInfo já listados abaixo
+// (firmware, serial, interface, letra de unidade, rótulo de saúde bruto e
+// atributo SMART falhando), o app pode passar a enviar outros campos do CDI
+// no futuro — sem passthrough o zod PODAVA tudo que não estivesse listado
+// aqui (foi o que já aconteceu com smart_failing_attribute antes desta
+// atualização: existia no domínio C# mas nunca chegava ao Mongo).
 export const storageSchema = z.object({
   index: z.number().int(),
   capacity_gb: z.number(),
@@ -40,7 +46,13 @@ export const storageSchema = z.object({
   data_written_tb: z.number().nullable().optional(),
   data_read_tb: z.number().nullable().optional(),
   temperature_c: z.number().nullable().optional(),
-});
+  firmware: z.string().nullable().optional(),
+  serial_number: z.string().nullable().optional(),
+  interface_type: z.string().nullable().optional(),
+  drive_letter: z.string().nullable().optional(),
+  health_label: z.string().nullable().optional(),
+  smart_failing_attribute: z.string().nullable().optional(),
+}).passthrough();
 
 // passthrough: o app manda campos ricos (nome, fabricante, química, voltagem,
 // saúde, taxa de carga...) — sem isso o zod PODAVA tudo que não estava listado.
