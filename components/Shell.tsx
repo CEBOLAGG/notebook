@@ -25,9 +25,9 @@ export function Shell({ title, subtitle, actions, children }: ShellProps) {
             href="/"
             className="flex items-center gap-2.5 text-ink-900 transition-colors hover:opacity-80 dark:text-white"
           >
-            <span className="chroma flex h-8 items-center rounded-lg bg-ink-900/90 px-2 shadow-sm dark:bg-brand-600/90">
+            <span className="chroma flex h-8 items-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Notelet" className="h-4 w-auto" />
+              <img src="/logo.png" alt="Notelet" className="h-6 w-auto" />
             </span>
             <div className="leading-tight">
               <div className="text-[13px] font-semibold tracking-tight">Notelet</div>
