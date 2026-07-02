@@ -151,9 +151,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
         <section className="mt-8">
           <h2 className="mb-3 text-lg font-semibold text-ink-900 dark:text-white">Armazenamento</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {report.storage.map((s) => (
-              <StorageCard key={s.index} disk={s} />
-            ))}
+            <StorageCard disk={mainStorageDisk(report.storage)} />
           </div>
         </section>
       ) : null}
@@ -419,6 +417,18 @@ function formatGpus(m: ReportDoc['machine']): string {
   }
   if (m.graphics_adapters && m.graphics_adapters.length > 0) return m.graphics_adapters.join(' • ');
   return m.graphics_adapter || '—';
+}
+
+/**
+ * Escolhe o disco "principal" para exibir: o de maior capacidade. O app roda
+ * a partir de um pen drive USB, que também aparece na lista de discos físicos
+ * do Windows — como o pen drive é sempre muito menor que o armazenamento
+ * interno da máquina, a maior capacidade é um proxy confiável para "o disco
+ * real do notebook" sem depender de campos de interface que relatórios
+ * antigos não têm.
+ */
+function mainStorageDisk(disks: StoragePayload[]): StoragePayload {
+  return disks.reduce((main, d) => (d.capacity_gb > main.capacity_gb ? d : main), disks[0]);
 }
 
 /** Traduz o enum StorageType (C#) para um rótulo amigável. */
