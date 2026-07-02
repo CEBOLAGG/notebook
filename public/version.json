@@ -1,207 +1,218 @@
-{
-  "version": "1.7.1",
-  "date": "2026-06-26",
-  "url": "https://github.com/CEBOLAGG/notebook/releases/download/v1.7.1/NotebookCheck.exe",
-  "sha256": "39FAB60E1E5C32773D69B8D76DF38505D0AA18F188D999518D6604C3B6F50ACB",
-  "changelog": [
-    "Logo do Notelet no ícone do app e nas barras de título das janelas",
-    "Campos do cadastro com textos de exemplo (custos: \"frete, etc..\", acessórios, defeitos)",
-    "Revisão do cadastro destaca em evidência o que ainda falta preencher"
-  ],
-  "history": [
-    {
-      "version": "1.7.0",
-      "date": "2026-06-26",
-      "changelog": [
-        "Novo modo Desktop: sem bateria — som, internet e USB, com inspeção da carcaça + interna",
-        "Benchmark e humanização liberados nas etapas de Desempenho (Padrão e Detalhado)",
-        "Removido o teste de descarga de bateria",
-        "Novo modo \"Cadastro no estoque (ERP)\": registra a máquina no estoque em 5 etapas (origem, identificação, condição, destino, revisão)",
-        "NTB preenchido automaticamente pelo número de série e padronizado para NTB123"
-      ]
-    },
-    {
-      "version": "1.6.0",
-      "date": "2026-06-22",
-      "changelog": [
-        "Agora chamado Notelet — nova marca nas janelas do app e no atualizador",
-        "Testes num modal único: o teste roda dentro dele (estéreo, microfone com medidor de nível ao vivo e brilho) com resultado, comentário e salvar no mesmo lugar — sem abrir uma segunda janela",
-        "Câmera, pixels, teclado e touchpad abrem a partir do mesmo modal e já trazem o resultado de volta para confirmação",
-        "Botão + em cada teste para anexar um comentário do técnico, que passa a aparecer no relatório do site",
-        "Resultado de qualquer teste editável por seleção (OK, Atenção, Falha, Não testado, Não aplicável)",
-        "Relatórios à prova de pendrive: se o pendrive sair, travar ou trocar de letra, o relatório é salvo automaticamente numa pasta local em vez de se perder",
-        "Correção do CrystalDiskInfo na parte de disco (erro 'graph.html não encontrado'): extração agora é versionada e íntegra",
-        "Teste de brilho ganhou a opção Não aplicável; confirmação do teste de pixels sem pop-up",
-        "Correções: campo de comentário do teclado não aceitava digitação e posição do botão Rodar todos"
-      ]
-    },
-    {
-      "version": "1.5.0",
-      "date": "2026-06-12",
-      "changelog": [
-        "Reteste reformulado: mostra as falhas do relatório anterior e deixa escolher entre retestar só as falhas (2x cada) ou refazer o checklist completo sobrescrevendo o antigo",
-        "Refazer por cima preserva os dados antigos (stress, testes não re-executados, checklist manual, observações) e pré-preenche NTB, localização e técnico",
-        "Problemas da inspeção física (fotos com defeito) aparecem no plano do reteste",
-        "Resultados dos testes em grade de 2 colunas com posição fixa (não trocam mais de lugar ao rodar)",
-        "Teste de teclado: numpad incluído e seleção de layout (ABNT2/US) por dropdown dentro da janela",
-        "Teclado e touchpad de volta aos testes do técnico; teste de tom 1 kHz removido (estéreo L/R cobre)",
-        "Testes do técnico só entram na grade quando executados — os pulados são acusados no painel",
-        "Ícones profissionais nas portas (ícones nativos do Windows no lugar de emojis)",
-        "Correções: resultados de testes manuais sumiam ao navegar entre etapas; era possível concluir sem enviar o relatório; status Atenção/Não testado apareciam vazios na grade"
-      ]
-    },
-    {
-      "version": "1.4.0",
-      "date": "2026-06-12",
-      "changelog": [
-        "Novos testes: brilho da tela, microfone com medidor ao vivo (VU), throttling térmico, descarga de bateria, taxa de atualização, biometria, leitor de cartão e portas USB",
-        "Sensores ao vivo na etapa de desempenho: temperatura, clock real (efetivo) e ventoinhas",
-        "Teclado e touchpad movidos para Inputs e portas; tecla com defeito selecionável clicando no próprio teclado",
-        "Mais padrões no teste de tela (gradiente, xadrez e nitidez de texto)",
-        "Autopilot: detecção pelo arquivo de perfil no disco (PCs provisionados) e correção de falsos positivos — verificação no tenant em desenvolvimento (beta)",
-        "Inspeção física simplificada: 4 fotos principais + fotos de defeito opcionais, sem obrigatoriedade",
-        "Código NTB padronizado com prefixo automático (123 vira NTB-123) e técnico responsável obrigatório",
-        "Envio do relatório agora acontece apenas na página de resumo",
-        "Mais detalhes de hardware (RAM por pente, GPU, CPU) e correções no check de senha da BIOS"
-      ]
-    },
-    {
-      "version": "1.3.3",
-      "date": "2026-06-11",
-      "changelog": [
-        "Detecção de Windows Autopilot refeita do zero (em beta): agora combina 4 fontes independentes — ponte WMI do MDM, dsregcmd, log de eventos do Autopilot e registro do Windows (perfil cloud-assigned, política e enrollments MDM/Intune) — e mostra um nível de confiança (Provável/Possível/Improvável) com pontuação 0-100, em vez de afirmar certeza.",
-        "O resultado do Autopilot inclui tenant detectado, vínculo com Entra ID e evidências encontradas; falsos positivos das chaves padrão do Windows e das autoridades internas foram filtrados.",
-        "Campo \"Autopilot (beta)\" de volta na aba de segurança e no relatório do painel."
-      ]
-    },
-    {
-      "version": "1.3.2",
-      "date": "2026-06-10",
-      "changelog": [
-        "Botão \"Parar\" dos testes de desempenho agora funciona de verdade: clicar em parar (CPU, GPU, disco, VRAM, RAM ou \"Rodar todos\") cancela o teste na hora.",
-        "Teste de VRAM não derruba mais o aplicativo em placas de vídeo fortes: alocação mais conservadora e detecção de reset do driver (TDR) antes de ler a memória."
-      ]
-    },
-    {
-      "version": "1.3.1",
-      "date": "2026-06-10",
-      "changelog": [
-        "Etapa \"Desempenho e stress\" mais clara nos modos Básico e Padrão: agora mostra um aviso explicando que o benchmark/stress só roda no modo Detalhado e que a humanização está nos modos Padrão e Detalhado (antes a tela ficava vazia, só com o título).",
-        "Painel: o modo de edição do relatório agora é uma página dedicada — ao salvar, volta automaticamente para o relatório."
-      ]
-    },
-    {
-      "version": "1.3.0",
-      "date": "2026-06-10",
-      "changelog": [
-        "Nota do benchmark refeita: agora é um índice normalizado onde 100 = máquina de referência (notebook médio 2023). Uma máquina 20% mais forte marca ~120, permitindo comparação real entre equipamentos — antes a nota era dominada pela GPU e mal distinguia CPU/disco.",
-        "RAM e VRAM agora são tratadas como teste de integridade (passa/falha) e não inflam mais a nota de desempenho.",
-        "Inspeção física no celular: depois de tirar cada foto, o técnico marca se o item está OK ou Com problema e adiciona um comentário.",
-        "Painel: as duas seções de inspeção física viraram uma só, com foto + status + comentário juntos.",
-        "Painel: modo de edição do relatório refeito (com abas) e agora permite editar o status e o comentário de cada foto da inspeção.",
-        "Painel: nova página \"Novidades\" com o histórico completo de versões."
-      ]
-    },
-    {
-      "version": "1.2.8",
-      "date": "2026-06-09",
-      "changelog": [
-        "Detecção de Windows Autopilot removida temporariamente: a verificação local só enxerga aparelhos com o perfil já aplicado e não consegue confirmar registro em outro tenant, então foi retirada para não passar informação parcial. Volta quando puder ser feita de forma confiável."
-      ]
-    },
-    {
-      "version": "1.2.7",
-      "date": "2026-06-09",
-      "changelog": [
-        "Bateria com visão completa: barra de carga atual, capacidade máxima em %, saúde, desgaste, nome, marca, química, voltagem e taxa de carga/descarga (lidos da API nativa do Windows, como o BatteryInfoView)",
-        "Bateria: notebooks com limite de carga (modo conservação) não aparecem mais como \"Indisponível\"",
-        "Bateria: falha de leitura do Windows não é mais confundida com \"sem bateria\", e notebooks com duas baterias passam a somar capacidade e ciclos corretamente",
-        "Detecção real do Windows Autopilot: lê o perfil atribuído ao aparelho no registro em vez de sempre indicar \"não\"",
-        "Saúde do disco: um disco marcado como defeituoso pelo Windows não aparece mais como \"SMART OK\"",
-        "Disco sem leitura de SMART deixa de reprovar a máquina indevidamente"
-      ]
-    },
-    {
-      "version": "1.2.6",
-      "date": "2026-06-06",
-      "changelog": [
-        "Novo botão \"Rodar todos os testes\": executa CPU, GPU, disco, VRAM e RAM em sequência",
-        "Nota final do benchmark de volta, consolidando todos os testes",
-        "Reenvio do relatório agora atualiza o existente em vez de duplicar (preserva comentários e edições do site)",
-        "Geekbench removido do painel web",
-        "Inspeção física no site: itens sem foto aparecem como \"Não realizado\" em vez de OK"
-      ]
-    },
-    {
-      "version": "1.2.5",
-      "date": "2026-06-06",
-      "changelog": [
-        "Inspeção física: teclado retroiluminado e numérico agora têm sinalização vermelha visível quando faltam",
-        "Aviso destacado ao tentar finalizar sem completar os campos obrigatórios",
-        "Não é mais possível avançar para o resumo sem finalizar as fotos da inspeção física no celular",
-        "Resumo agora mostra as fotos enviadas pelo celular",
-        "Resumo agora mostra as notas do benchmark (CPU, GPU, disco, VRAM e RAM)"
-      ]
-    },
-    {
-      "version": "1.2.4",
-      "date": "2026-06-06",
-      "changelog": [
-        "Barra de progresso dos benchmarks corrigida em todos os testes (agora avança suave de 0 a 100%)",
-        "Teste de CPU mostra progresso contínuo em vez de travar entre as fases",
-        "Teste de disco agora completa a barra até 100%",
-        "Teste de VRAM não derruba mais o driver: uso limitado a uma fração segura da memória da GPU",
-        "Temperatura da GPU corrigida (não mostra mais valores impossíveis como 255 graus)"
-      ]
-    },
-    {
-      "version": "1.2.3",
-      "date": "2026-06-06",
-      "changelog": [
-        "Barra de progresso dos benchmarks agora vai corretamente de 0 a 100% em cada teste",
-        "Etapa de desempenho voltou a permitir rolagem da tela",
-        "Teste de VRAM mais estável: não derruba mais o aplicativo (uso de VRAM mais conservador e tratamento de erros do driver)"
-      ]
-    },
-    {
-      "version": "1.2.2",
-      "date": "2026-06-06",
-      "changelog": [
-        "Manifesto de versão agora servido pelo MongoDB (atualizações sem depender de redeploy do site)",
-        "Verificação de versão com fallback automático para o arquivo estático",
-        "Publicação de novas versões totalmente automatizada"
-      ]
-    },
-    {
-      "version": "1.2.1",
-      "date": "2026-06-06",
-      "changelog": [
-        "Correção do auto-updater: o download do app não era concluído (tempo limite muito curto para 113 MB)",
-        "Tempo de download agora é independente da verificação de versão",
-        "Mensagem de erro de atualização mais clara"
-      ]
-    },
-    {
-      "version": "1.2.0",
-      "date": "2026-06-06",
-      "changelog": [
-        "Correção: textos do relatório ficavam ilegíveis (brancos) no painel ao abrir um relatório",
-        "Títulos e campos do relatório agora com cor explícita nos temas claro e escuro",
-        "Histórico de versões acumulado no changelog"
-      ]
-    },
-    {
-      "version": "1.1.0",
-      "date": null,
-      "changelog": [
-        "Auto-atualização: o app agora se atualiza sozinho ao abrir",
-        "Tela inicial mostra as novidades de cada versão",
-        "Inspeção física por QR code e fotos pelo celular",
-        "Benchmark separado por CPU, GPU, VRAM, RAM e disco",
-        "Bateria com capacidade máxima, ciclos e vida útil via CrystalDiskInfo",
-        "Pergunta de teclado numérico e retroiluminado",
-        "Edição completa dos relatórios pelo painel web"
-      ]
-    }
-  ]
+﻿{
+    "version":  "1.7.2",
+    "date":  "2026-07-02",
+    "url":  "https://github.com/CEBOLAGG/notebook/releases/download/v1.7.2/NotebookCheck.exe",
+    "sha256":  "5623964465484F3D164B89EFCC0CF8664F17128197184CBE2B02E6E3063536AA",
+    "changelog":  [
+                      "Armazenamento no relatÃ³rio com dados completos do disco: fabricante, nÃºmero de sÃ©rie, interface, letra da unidade e saÃºde (SMART) â€” alÃ©m da capacidade real de fÃ¡brica (antes mostrava o valor do Windows, tipo 931 GB em vez de 1000 GB pra um disco de 1TB)",
+                      "Pen drive de boot nÃ£o aparece mais como disco no relatÃ³rio nem na soma de armazenamento do cadastro (ERP)",
+                      "Corrigido: iniciar um novo checklist nÃ£o herda mais os resultados dos testes automÃ¡ticos do checklist anterior",
+                      "Painel: seÃ§Ã£o de Armazenamento mostra sÃ³ o disco principal da mÃ¡quina",
+                      "Painel: nova identidade visual verde e logo sem fundo"
+                  ],
+    "history":  [
+                    {
+                        "version":  "1.7.1",
+                        "date":  "2026-06-26",
+                        "changelog":  [
+                                          "Logo do Notelet no Ã­cone do app e nas barras de tÃ­tulo das janelas",
+                                          "Campos do cadastro com textos de exemplo (custos: \"frete, etc..\", acessÃ³rios, defeitos)",
+                                          "RevisÃ£o do cadastro destaca em evidÃªncia o que ainda falta preencher"
+                                      ]
+                    },
+                    {
+                        "version":  "1.7.0",
+                        "date":  "2026-06-26",
+                        "changelog":  [
+                                          "Novo modo Desktop: sem bateria â€” som, internet e USB, com inspeÃ§Ã£o da carcaÃ§a + interna",
+                                          "Benchmark e humanizaÃ§Ã£o liberados nas etapas de Desempenho (PadrÃ£o e Detalhado)",
+                                          "Removido o teste de descarga de bateria",
+                                          "Novo modo \"Cadastro no estoque (ERP)\": registra a mÃ¡quina no estoque em 5 etapas (origem, identificaÃ§Ã£o, condiÃ§Ã£o, destino, revisÃ£o)",
+                                          "NTB preenchido automaticamente pelo nÃºmero de sÃ©rie e padronizado para NTB123"
+                                      ]
+                    },
+                    {
+                        "version":  "1.6.0",
+                        "date":  "2026-06-22",
+                        "changelog":  [
+                                          "Agora chamado Notelet â€” nova marca nas janelas do app e no atualizador",
+                                          "Testes num modal Ãºnico: o teste roda dentro dele (estÃ©reo, microfone com medidor de nÃ­vel ao vivo e brilho) com resultado, comentÃ¡rio e salvar no mesmo lugar â€” sem abrir uma segunda janela",
+                                          "CÃ¢mera, pixels, teclado e touchpad abrem a partir do mesmo modal e jÃ¡ trazem o resultado de volta para confirmaÃ§Ã£o",
+                                          "BotÃ£o + em cada teste para anexar um comentÃ¡rio do tÃ©cnico, que passa a aparecer no relatÃ³rio do site",
+                                          "Resultado de qualquer teste editÃ¡vel por seleÃ§Ã£o (OK, AtenÃ§Ã£o, Falha, NÃ£o testado, NÃ£o aplicÃ¡vel)",
+                                          "RelatÃ³rios Ã  prova de pendrive: se o pendrive sair, travar ou trocar de letra, o relatÃ³rio Ã© salvo automaticamente numa pasta local em vez de se perder",
+                                          "CorreÃ§Ã£o do CrystalDiskInfo na parte de disco (erro \u0027graph.html nÃ£o encontrado\u0027): extraÃ§Ã£o agora Ã© versionada e Ã­ntegra",
+                                          "Teste de brilho ganhou a opÃ§Ã£o NÃ£o aplicÃ¡vel; confirmaÃ§Ã£o do teste de pixels sem pop-up",
+                                          "CorreÃ§Ãµes: campo de comentÃ¡rio do teclado nÃ£o aceitava digitaÃ§Ã£o e posiÃ§Ã£o do botÃ£o Rodar todos"
+                                      ]
+                    },
+                    {
+                        "version":  "1.5.0",
+                        "date":  "2026-06-12",
+                        "changelog":  [
+                                          "Reteste reformulado: mostra as falhas do relatÃ³rio anterior e deixa escolher entre retestar sÃ³ as falhas (2x cada) ou refazer o checklist completo sobrescrevendo o antigo",
+                                          "Refazer por cima preserva os dados antigos (stress, testes nÃ£o re-executados, checklist manual, observaÃ§Ãµes) e prÃ©-preenche NTB, localizaÃ§Ã£o e tÃ©cnico",
+                                          "Problemas da inspeÃ§Ã£o fÃ­sica (fotos com defeito) aparecem no plano do reteste",
+                                          "Resultados dos testes em grade de 2 colunas com posiÃ§Ã£o fixa (nÃ£o trocam mais de lugar ao rodar)",
+                                          "Teste de teclado: numpad incluÃ­do e seleÃ§Ã£o de layout (ABNT2/US) por dropdown dentro da janela",
+                                          "Teclado e touchpad de volta aos testes do tÃ©cnico; teste de tom 1 kHz removido (estÃ©reo L/R cobre)",
+                                          "Testes do tÃ©cnico sÃ³ entram na grade quando executados â€” os pulados sÃ£o acusados no painel",
+                                          "Ãcones profissionais nas portas (Ã­cones nativos do Windows no lugar de emojis)",
+                                          "CorreÃ§Ãµes: resultados de testes manuais sumiam ao navegar entre etapas; era possÃ­vel concluir sem enviar o relatÃ³rio; status AtenÃ§Ã£o/NÃ£o testado apareciam vazios na grade"
+                                      ]
+                    },
+                    {
+                        "version":  "1.4.0",
+                        "date":  "2026-06-12",
+                        "changelog":  [
+                                          "Novos testes: brilho da tela, microfone com medidor ao vivo (VU), throttling tÃ©rmico, descarga de bateria, taxa de atualizaÃ§Ã£o, biometria, leitor de cartÃ£o e portas USB",
+                                          "Sensores ao vivo na etapa de desempenho: temperatura, clock real (efetivo) e ventoinhas",
+                                          "Teclado e touchpad movidos para Inputs e portas; tecla com defeito selecionÃ¡vel clicando no prÃ³prio teclado",
+                                          "Mais padrÃµes no teste de tela (gradiente, xadrez e nitidez de texto)",
+                                          "Autopilot: detecÃ§Ã£o pelo arquivo de perfil no disco (PCs provisionados) e correÃ§Ã£o de falsos positivos â€” verificaÃ§Ã£o no tenant em desenvolvimento (beta)",
+                                          "InspeÃ§Ã£o fÃ­sica simplificada: 4 fotos principais + fotos de defeito opcionais, sem obrigatoriedade",
+                                          "CÃ³digo NTB padronizado com prefixo automÃ¡tico (123 vira NTB-123) e tÃ©cnico responsÃ¡vel obrigatÃ³rio",
+                                          "Envio do relatÃ³rio agora acontece apenas na pÃ¡gina de resumo",
+                                          "Mais detalhes de hardware (RAM por pente, GPU, CPU) e correÃ§Ãµes no check de senha da BIOS"
+                                      ]
+                    },
+                    {
+                        "version":  "1.3.3",
+                        "date":  "2026-06-11",
+                        "changelog":  [
+                                          "DetecÃ§Ã£o de Windows Autopilot refeita do zero (em beta): agora combina 4 fontes independentes â€” ponte WMI do MDM, dsregcmd, log de eventos do Autopilot e registro do Windows (perfil cloud-assigned, polÃ­tica e enrollments MDM/Intune) â€” e mostra um nÃ­vel de confianÃ§a (ProvÃ¡vel/PossÃ­vel/ImprovÃ¡vel) com pontuaÃ§Ã£o 0-100, em vez de afirmar certeza.",
+                                          "O resultado do Autopilot inclui tenant detectado, vÃ­nculo com Entra ID e evidÃªncias encontradas; falsos positivos das chaves padrÃ£o do Windows e das autoridades internas foram filtrados.",
+                                          "Campo \"Autopilot (beta)\" de volta na aba de seguranÃ§a e no relatÃ³rio do painel."
+                                      ]
+                    },
+                    {
+                        "version":  "1.3.2",
+                        "date":  "2026-06-10",
+                        "changelog":  [
+                                          "BotÃ£o \"Parar\" dos testes de desempenho agora funciona de verdade: clicar em parar (CPU, GPU, disco, VRAM, RAM ou \"Rodar todos\") cancela o teste na hora.",
+                                          "Teste de VRAM nÃ£o derruba mais o aplicativo em placas de vÃ­deo fortes: alocaÃ§Ã£o mais conservadora e detecÃ§Ã£o de reset do driver (TDR) antes de ler a memÃ³ria."
+                                      ]
+                    },
+                    {
+                        "version":  "1.3.1",
+                        "date":  "2026-06-10",
+                        "changelog":  [
+                                          "Etapa \"Desempenho e stress\" mais clara nos modos BÃ¡sico e PadrÃ£o: agora mostra um aviso explicando que o benchmark/stress sÃ³ roda no modo Detalhado e que a humanizaÃ§Ã£o estÃ¡ nos modos PadrÃ£o e Detalhado (antes a tela ficava vazia, sÃ³ com o tÃ­tulo).",
+                                          "Painel: o modo de ediÃ§Ã£o do relatÃ³rio agora Ã© uma pÃ¡gina dedicada â€” ao salvar, volta automaticamente para o relatÃ³rio."
+                                      ]
+                    },
+                    {
+                        "version":  "1.3.0",
+                        "date":  "2026-06-10",
+                        "changelog":  [
+                                          "Nota do benchmark refeita: agora Ã© um Ã­ndice normalizado onde 100 = mÃ¡quina de referÃªncia (notebook mÃ©dio 2023). Uma mÃ¡quina 20% mais forte marca ~120, permitindo comparaÃ§Ã£o real entre equipamentos â€” antes a nota era dominada pela GPU e mal distinguia CPU/disco.",
+                                          "RAM e VRAM agora sÃ£o tratadas como teste de integridade (passa/falha) e nÃ£o inflam mais a nota de desempenho.",
+                                          "InspeÃ§Ã£o fÃ­sica no celular: depois de tirar cada foto, o tÃ©cnico marca se o item estÃ¡ OK ou Com problema e adiciona um comentÃ¡rio.",
+                                          "Painel: as duas seÃ§Ãµes de inspeÃ§Ã£o fÃ­sica viraram uma sÃ³, com foto + status + comentÃ¡rio juntos.",
+                                          "Painel: modo de ediÃ§Ã£o do relatÃ³rio refeito (com abas) e agora permite editar o status e o comentÃ¡rio de cada foto da inspeÃ§Ã£o.",
+                                          "Painel: nova pÃ¡gina \"Novidades\" com o histÃ³rico completo de versÃµes."
+                                      ]
+                    },
+                    {
+                        "version":  "1.2.8",
+                        "date":  "2026-06-09",
+                        "changelog":  [
+                                          "DetecÃ§Ã£o de Windows Autopilot removida temporariamente: a verificaÃ§Ã£o local sÃ³ enxerga aparelhos com o perfil jÃ¡ aplicado e nÃ£o consegue confirmar registro em outro tenant, entÃ£o foi retirada para nÃ£o passar informaÃ§Ã£o parcial. Volta quando puder ser feita de forma confiÃ¡vel."
+                                      ]
+                    },
+                    {
+                        "version":  "1.2.7",
+                        "date":  "2026-06-09",
+                        "changelog":  [
+                                          "Bateria com visÃ£o completa: barra de carga atual, capacidade mÃ¡xima em %, saÃºde, desgaste, nome, marca, quÃ­mica, voltagem e taxa de carga/descarga (lidos da API nativa do Windows, como o BatteryInfoView)",
+                                          "Bateria: notebooks com limite de carga (modo conservaÃ§Ã£o) nÃ£o aparecem mais como \"IndisponÃ­vel\"",
+                                          "Bateria: falha de leitura do Windows nÃ£o Ã© mais confundida com \"sem bateria\", e notebooks com duas baterias passam a somar capacidade e ciclos corretamente",
+                                          "DetecÃ§Ã£o real do Windows Autopilot: lÃª o perfil atribuÃ­do ao aparelho no registro em vez de sempre indicar \"nÃ£o\"",
+                                          "SaÃºde do disco: um disco marcado como defeituoso pelo Windows nÃ£o aparece mais como \"SMART OK\"",
+                                          "Disco sem leitura de SMART deixa de reprovar a mÃ¡quina indevidamente"
+                                      ]
+                    },
+                    {
+                        "version":  "1.2.6",
+                        "date":  "2026-06-06",
+                        "changelog":  [
+                                          "Novo botÃ£o \"Rodar todos os testes\": executa CPU, GPU, disco, VRAM e RAM em sequÃªncia",
+                                          "Nota final do benchmark de volta, consolidando todos os testes",
+                                          "Reenvio do relatÃ³rio agora atualiza o existente em vez de duplicar (preserva comentÃ¡rios e ediÃ§Ãµes do site)",
+                                          "Geekbench removido do painel web",
+                                          "InspeÃ§Ã£o fÃ­sica no site: itens sem foto aparecem como \"NÃ£o realizado\" em vez de OK"
+                                      ]
+                    },
+                    {
+                        "version":  "1.2.5",
+                        "date":  "2026-06-06",
+                        "changelog":  [
+                                          "InspeÃ§Ã£o fÃ­sica: teclado retroiluminado e numÃ©rico agora tÃªm sinalizaÃ§Ã£o vermelha visÃ­vel quando faltam",
+                                          "Aviso destacado ao tentar finalizar sem completar os campos obrigatÃ³rios",
+                                          "NÃ£o Ã© mais possÃ­vel avanÃ§ar para o resumo sem finalizar as fotos da inspeÃ§Ã£o fÃ­sica no celular",
+                                          "Resumo agora mostra as fotos enviadas pelo celular",
+                                          "Resumo agora mostra as notas do benchmark (CPU, GPU, disco, VRAM e RAM)"
+                                      ]
+                    },
+                    {
+                        "version":  "1.2.4",
+                        "date":  "2026-06-06",
+                        "changelog":  [
+                                          "Barra de progresso dos benchmarks corrigida em todos os testes (agora avanÃ§a suave de 0 a 100%)",
+                                          "Teste de CPU mostra progresso contÃ­nuo em vez de travar entre as fases",
+                                          "Teste de disco agora completa a barra atÃ© 100%",
+                                          "Teste de VRAM nÃ£o derruba mais o driver: uso limitado a uma fraÃ§Ã£o segura da memÃ³ria da GPU",
+                                          "Temperatura da GPU corrigida (nÃ£o mostra mais valores impossÃ­veis como 255 graus)"
+                                      ]
+                    },
+                    {
+                        "version":  "1.2.3",
+                        "date":  "2026-06-06",
+                        "changelog":  [
+                                          "Barra de progresso dos benchmarks agora vai corretamente de 0 a 100% em cada teste",
+                                          "Etapa de desempenho voltou a permitir rolagem da tela",
+                                          "Teste de VRAM mais estÃ¡vel: nÃ£o derruba mais o aplicativo (uso de VRAM mais conservador e tratamento de erros do driver)"
+                                      ]
+                    },
+                    {
+                        "version":  "1.2.2",
+                        "date":  "2026-06-06",
+                        "changelog":  [
+                                          "Manifesto de versÃ£o agora servido pelo MongoDB (atualizaÃ§Ãµes sem depender de redeploy do site)",
+                                          "VerificaÃ§Ã£o de versÃ£o com fallback automÃ¡tico para o arquivo estÃ¡tico",
+                                          "PublicaÃ§Ã£o de novas versÃµes totalmente automatizada"
+                                      ]
+                    },
+                    {
+                        "version":  "1.2.1",
+                        "date":  "2026-06-06",
+                        "changelog":  [
+                                          "CorreÃ§Ã£o do auto-updater: o download do app nÃ£o era concluÃ­do (tempo limite muito curto para 113 MB)",
+                                          "Tempo de download agora Ã© independente da verificaÃ§Ã£o de versÃ£o",
+                                          "Mensagem de erro de atualizaÃ§Ã£o mais clara"
+                                      ]
+                    },
+                    {
+                        "version":  "1.2.0",
+                        "date":  "2026-06-06",
+                        "changelog":  [
+                                          "CorreÃ§Ã£o: textos do relatÃ³rio ficavam ilegÃ­veis (brancos) no painel ao abrir um relatÃ³rio",
+                                          "TÃ­tulos e campos do relatÃ³rio agora com cor explÃ­cita nos temas claro e escuro",
+                                          "HistÃ³rico de versÃµes acumulado no changelog"
+                                      ]
+                    },
+                    {
+                        "version":  "1.1.0",
+                        "date":  null,
+                        "changelog":  [
+                                          "Auto-atualizaÃ§Ã£o: o app agora se atualiza sozinho ao abrir",
+                                          "Tela inicial mostra as novidades de cada versÃ£o",
+                                          "InspeÃ§Ã£o fÃ­sica por QR code e fotos pelo celular",
+                                          "Benchmark separado por CPU, GPU, VRAM, RAM e disco",
+                                          "Bateria com capacidade mÃ¡xima, ciclos e vida Ãºtil via CrystalDiskInfo",
+                                          "Pergunta de teclado numÃ©rico e retroiluminado",
+                                          "EdiÃ§Ã£o completa dos relatÃ³rios pelo painel web"
+                                      ]
+                    }
+                ]
 }
